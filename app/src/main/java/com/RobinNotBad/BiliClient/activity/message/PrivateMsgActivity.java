@@ -63,6 +63,8 @@ public class PrivateMsgActivity extends BaseActivity {
         uid = intent.getLongExtra("uid", 114514);
         Log.e("", String.valueOf(uid));
 
+        MsgUtil.showMsg("私信有可能被拦截\n尽量不要用终端发私信喵");
+
         CenterThreadPool.run(() -> {
             try {
                 allMsg = PrivateMsgApi.getPrivateMsg(uid, 50, 0, 0);

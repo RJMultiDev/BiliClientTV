@@ -136,7 +136,7 @@ public class QRLoginFragment extends Fragment {
 
                 CookiesApi.checkCookies();
                 QRImage = LoginApi.getLoginQR();
-                CookiesApi.activeCookieInfo();
+                //CookiesApi.activeCookieInfo();
 
                 CenterThreadPool.runOnUiThread(() -> {
                     Log.e("debug-image", QRImage.getWidth() + "," + QRImage.getHeight());

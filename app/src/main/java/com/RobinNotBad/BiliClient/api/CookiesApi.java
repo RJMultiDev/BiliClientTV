@@ -226,7 +226,7 @@ public class CookiesApi {
             }
         }
 
-        activeCookieInfo();
+        //activeCookieInfo();
     }
 
     private static Integer parseInt(String string) {

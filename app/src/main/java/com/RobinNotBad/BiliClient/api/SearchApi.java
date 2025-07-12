@@ -37,6 +37,7 @@ public class SearchApi {
 
         JSONObject all = NetWorkUtil.getJson(ConfInfoApi.signWBI(url));  //得到一整个json
 
+        if(all.isNull("data")) return null;
         JSONObject data = all.getJSONObject("data");  //搜索列表中的data项又是一个json，把它提出来
 
         seid = data.getString("seid");
@@ -58,6 +59,7 @@ public class SearchApi {
 
         JSONObject all = NetWorkUtil.getJson(ConfInfoApi.signWBI(url));  //得到一整个json
 
+        if(all.isNull("data")) return null;
         JSONObject data = all.getJSONObject("data");  //搜索列表中的data项又是一个json，把它提出来
 
         seid = data.getString("seid");
