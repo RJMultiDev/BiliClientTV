@@ -4,13 +4,19 @@ public class Opus {
     public static final int TYPE_DYNAMIC = 1;
     public static final int TYPE_ARTICLE = 2;
 
-    public String content;
-    public String cover;
-    public long opusId;
-    public String timeText;
-    public String title;
-
+    public long id;
     public int type;
+    public long commentId;
+    public int commentType;
+    public String title;
+    public String cover;
+    public String content;
+    public String pubTime;
+    public UserInfo upInfo;
+    public Stats stats;
+    public OpusParagraph[] paragraphs;
+
+
     public long parsedId;
 
     public Opus(int type, long id) {

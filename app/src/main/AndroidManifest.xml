@@ -155,6 +155,11 @@
             android:label="内置播放器"
             android:theme="@style/Theme.NoSwipe" />
         <activity
+            android:name=".activity.article.OpusInfoActivity"
+            android:exported="true"
+            android:label="文章详情"
+            android:screenOrientation="locked" />
+        <activity
             android:name=".activity.article.ArticleInfoActivity"
             android:exported="false"
             android:label="专栏详情"

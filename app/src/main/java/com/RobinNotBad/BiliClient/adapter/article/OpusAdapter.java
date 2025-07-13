@@ -49,7 +49,7 @@ public class OpusAdapter extends RecyclerView.Adapter<OpusAdapter.OpusHolder> {
     @Override
     public void onBindViewHolder(@NonNull OpusHolder holder, int position) {
         Opus opus = opusList.get(position);
-        holder.favTimeText.setText(opus.timeText);
+        holder.favTimeText.setText(opus.pubTime);
         holder.titleText.setText(opus.title);
         Glide.with(BiliTerminal.context).load(GlideUtil.url(opus.cover))
                 .transition(GlideUtil.getTransitionOptions())
@@ -62,7 +62,7 @@ public class OpusAdapter extends RecyclerView.Adapter<OpusAdapter.OpusHolder> {
         } else {
             holder.itemView.setOnClickListener(v -> CenterThreadPool.run(() -> {
                 try {
-                    parsedOpus = ArticleApi.opusId2cvid(opus.opusId);
+                    parsedOpus = ArticleApi.opusId2cvid(opus.id);
                     cvid = parsedOpus.parsedId;
                 } catch (Exception e) {
                     MsgUtil.err(e);
@@ -75,7 +75,7 @@ public class OpusAdapter extends RecyclerView.Adapter<OpusAdapter.OpusHolder> {
                         TerminalContext.getInstance().enterArticleDetailPage(context, cvid);
                     }
                     if (parsedOpus.type == Opus.TYPE_DYNAMIC) {
-                        TerminalContext.getInstance().enterDynamicDetailPage(context, opus.opusId);
+                        TerminalContext.getInstance().enterDynamicDetailPage(context, opus.id);
                     }
                 }
             }));

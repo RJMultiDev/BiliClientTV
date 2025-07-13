@@ -121,7 +121,7 @@ public class ArticleInfoFragment extends Fragment {
                         JSONObject element = jsonObject.getJSONArray("ops").getJSONObject(i);
                         if (element.has("insert")) {
                             if (element.get("insert") instanceof JSONObject) { //有图片
-                                lineList.add(new ArticleLine(1, JsonUtil.searchString(element.getJSONObject("insert"), "url", ""), ""));
+                                lineList.add(new ArticleLine(1, JsonUtil.search(element.getJSONObject("insert"), "url", ""), ""));
                             } else { //纯文字
                                 lineList.add(new ArticleLine(0, element.getString("insert"), ""));
                             }

@@ -142,8 +142,8 @@ public class FavoriteApi {
             } else {
                 opus.title = item.getString("content");
             }
-            opus.opusId = Long.parseLong(item.getString("opus_id"));
-            opus.timeText = item.getString("time_text");
+            opus.id = Long.parseLong(item.getString("opus_id"));
+            opus.pubTime = item.getString("time_text");
             list.add(opus);
         }
 

@@ -9,10 +9,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.RobinNotBad.BiliClient.R;
+import com.RobinNotBad.BiliClient.activity.article.OpusInfoActivity;
 import com.RobinNotBad.BiliClient.activity.base.BaseActivity;
 import com.RobinNotBad.BiliClient.activity.settings.login.SpecialLoginActivity;
 import com.RobinNotBad.BiliClient.api.ConfInfoApi;
-import com.RobinNotBad.BiliClient.api.CookiesApi;
 import com.RobinNotBad.BiliClient.api.OpusApi;
 import com.RobinNotBad.BiliClient.util.CenterThreadPool;
 import com.RobinNotBad.BiliClient.util.MsgUtil;
@@ -102,15 +102,8 @@ public class TestActivity extends BaseActivity {
             startActivity(intent);
         });
 
-        btn_opus.setOnClickListener(v -> CenterThreadPool.run(()->{
-            try {
-                OpusApi.getOpusContent(1088392846523760706L);
-                //746992184182439955
-                //1088392846523760706
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }));
+
+        btn_opus.setOnClickListener(v -> startActivity(new Intent(this, OpusInfoActivity.class).putExtra("oid", 1088956423556038660L)));
 
 
         //我为什么要加这个？

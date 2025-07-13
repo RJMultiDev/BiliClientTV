@@ -123,6 +123,7 @@ public class UserInfo implements Parcelable, Serializable {
 
     public UserInfo() {
     }
+
     public UserInfo(JSONObject userInfoJson) throws JSONException {
         this.level = userInfoJson.getJSONObject("level_info").getInt("current_level");
         this.mid = userInfoJson.getLong("mid");
