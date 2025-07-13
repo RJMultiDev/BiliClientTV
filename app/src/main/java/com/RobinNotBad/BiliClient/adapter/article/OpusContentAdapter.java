@@ -95,7 +95,7 @@ public class OpusContentAdapter extends RecyclerView.Adapter<OpusContentAdapter.
                 imageView.setOnClickListener(view -> {
                     Intent intent = new Intent();
                     intent.setClass(context, ImageViewerActivity.class);
-                    intent.putExtra("imageList", (ArrayList<String>)Arrays.asList(urls));
+                    intent.putExtra("imageList", new ArrayList<>(Arrays.asList(urls)));
                     context.startActivity(intent);
                 });
                 break;

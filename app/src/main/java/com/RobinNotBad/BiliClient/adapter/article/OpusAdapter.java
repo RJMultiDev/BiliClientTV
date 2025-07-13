@@ -1,6 +1,5 @@
 package com.RobinNotBad.BiliClient.adapter.article;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.RobinNotBad.BiliClient.BiliTerminal;
 import com.RobinNotBad.BiliClient.R;
-import com.RobinNotBad.BiliClient.api.ArticleApi;
 import com.RobinNotBad.BiliClient.model.Opus;
-import com.RobinNotBad.BiliClient.util.CenterThreadPool;
 import com.RobinNotBad.BiliClient.util.GlideUtil;
 import com.RobinNotBad.BiliClient.util.MsgUtil;
 import com.RobinNotBad.BiliClient.util.TerminalContext;
@@ -60,25 +57,7 @@ public class OpusAdapter extends RecyclerView.Adapter<OpusAdapter.OpusHolder> {
         if (opus.content.equals("内容失效")) {
             holder.itemView.setOnClickListener(v -> MsgUtil.showMsg("内容失效，无法打开"));
         } else {
-            holder.itemView.setOnClickListener(v -> CenterThreadPool.run(() -> {
-                try {
-                    parsedOpus = ArticleApi.opusId2cvid(opus.id);
-                    cvid = parsedOpus.parsedId;
-                } catch (Exception e) {
-                    MsgUtil.err(e);
-                    cvid = -1;
-                }
-                if (cvid == -1)
-                    ((Activity) context).runOnUiThread(() -> MsgUtil.showMsg("打开失败"));
-                else {
-                    if (parsedOpus.type == Opus.TYPE_ARTICLE) {
-                        TerminalContext.getInstance().enterArticleDetailPage(context, cvid);
-                    }
-                    if (parsedOpus.type == Opus.TYPE_DYNAMIC) {
-                        TerminalContext.getInstance().enterDynamicDetailPage(context, opus.id);
-                    }
-                }
-            }));
+            holder.itemView.setOnClickListener(v -> TerminalContext.getInstance().enterOpusDetailPage(context, opus.id));
         }
 
 

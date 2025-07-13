@@ -4,16 +4,30 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+
 import androidx.annotation.Nullable;
 import androidx.collection.LruCache;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import com.RobinNotBad.BiliClient.activity.article.ArticleInfoActivity;
-import com.RobinNotBad.BiliClient.activity.dynamic.DynamicInfoActivity;
+
+import com.RobinNotBad.BiliClient.activity.article.OpusInfoActivity;
 import com.RobinNotBad.BiliClient.activity.live.LiveInfoActivity;
 import com.RobinNotBad.BiliClient.activity.video.info.VideoInfoActivity;
-import com.RobinNotBad.BiliClient.api.*;
-import com.RobinNotBad.BiliClient.model.*;
+import com.RobinNotBad.BiliClient.api.ArticleApi;
+import com.RobinNotBad.BiliClient.api.DynamicApi;
+import com.RobinNotBad.BiliClient.api.LiveApi;
+import com.RobinNotBad.BiliClient.api.ReplyApi;
+import com.RobinNotBad.BiliClient.api.UserInfoApi;
+import com.RobinNotBad.BiliClient.api.VideoInfoApi;
+import com.RobinNotBad.BiliClient.model.ArticleInfo;
+import com.RobinNotBad.BiliClient.model.ContentType;
+import com.RobinNotBad.BiliClient.model.Dynamic;
+import com.RobinNotBad.BiliClient.model.LiveInfo;
+import com.RobinNotBad.BiliClient.model.LivePlayInfo;
+import com.RobinNotBad.BiliClient.model.LiveRoom;
+import com.RobinNotBad.BiliClient.model.Reply;
+import com.RobinNotBad.BiliClient.model.UserInfo;
+import com.RobinNotBad.BiliClient.model.VideoInfo;
 
 import java.util.concurrent.Future;
 
@@ -130,8 +144,20 @@ public class TerminalContext {
     }
 
     public void enterArticleDetailPage(Context context, long cvid, long seekReply) {
-        Intent intent = new Intent(context, ArticleInfoActivity.class);
-        intent.putExtra("cvid", cvid);
+        Intent intent = new Intent(context, OpusInfoActivity.class);
+        intent.putExtra("id", cvid);
+        intent.putExtra("seekReply", seekReply);
+        context.startActivity(intent);
+    }
+
+    //文章详情页跳转
+    public void enterOpusDetailPage(Context context, long id) {
+        enterOpusDetailPage(context, id, -1);
+    }
+
+    public void enterOpusDetailPage(Context context, long id, long seekReply) {
+        Intent intent = new Intent(context, OpusInfoActivity.class);
+        intent.putExtra("id", id);
         intent.putExtra("seekReply", seekReply);
         context.startActivity(intent);
     }
@@ -158,7 +184,7 @@ public class TerminalContext {
     }
 
     public void enterDynamicDetailPage(Context context, long id, int position, long seekReply) {
-        Intent intent = new Intent(context, DynamicInfoActivity.class);
+        Intent intent = new Intent(context, OpusInfoActivity.class);
         intent.putExtra("position", position);
         intent.putExtra("id", id);
         intent.putExtra("seekReply", seekReply);
@@ -169,7 +195,7 @@ public class TerminalContext {
      * 由于动态有可删除的特性，部分页面依赖动态页面activity的result实现页面更新，这里加入额外的一个兼容方法
      */
     public void enterDynamicDetailPageForResult(Activity activity, long id, int position, int requestId) {
-        Intent intent = new Intent(activity, DynamicInfoActivity.class);
+        Intent intent = new Intent(activity, OpusInfoActivity.class);
         intent.putExtra("id", id);
         intent.putExtra("position", position);
         activity.startActivityForResult(intent, requestId);

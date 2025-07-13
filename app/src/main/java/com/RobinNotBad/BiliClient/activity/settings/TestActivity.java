@@ -13,7 +13,6 @@ import com.RobinNotBad.BiliClient.activity.article.OpusInfoActivity;
 import com.RobinNotBad.BiliClient.activity.base.BaseActivity;
 import com.RobinNotBad.BiliClient.activity.settings.login.SpecialLoginActivity;
 import com.RobinNotBad.BiliClient.api.ConfInfoApi;
-import com.RobinNotBad.BiliClient.api.OpusApi;
 import com.RobinNotBad.BiliClient.util.CenterThreadPool;
 import com.RobinNotBad.BiliClient.util.MsgUtil;
 import com.RobinNotBad.BiliClient.util.NetWorkUtil;
@@ -25,7 +24,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -103,7 +101,7 @@ public class TestActivity extends BaseActivity {
         });
 
 
-        btn_opus.setOnClickListener(v -> startActivity(new Intent(this, OpusInfoActivity.class).putExtra("oid", 1088956423556038660L)));
+        btn_opus.setOnClickListener(v -> startActivity(new Intent(this, OpusInfoActivity.class).putExtra("id", 781871626480254985L)));
 
 
         //我为什么要加这个？
