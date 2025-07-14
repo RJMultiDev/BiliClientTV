@@ -152,10 +152,10 @@ public class SplashActivity extends Activity {
         });
     }
 
-    private void checkCookieRefresh() throws IOException{
+    private void checkCookieRefresh() throws IOException {
         try {
             JSONObject cookieInfo = CookieRefreshApi.cookieInfo();
-            if (cookieInfo.getBoolean("refresh")) {
+            if (cookieInfo.optBoolean("refresh")) {
                 Log.e("Cookies", "需要刷新");
                 if (!Objects.equals(SharedPreferencesUtil.getString(SharedPreferencesUtil.refresh_token, ""), "")) {
                     String correspondPath = CookieRefreshApi.getCorrespondPath(cookieInfo.getLong("timestamp"));

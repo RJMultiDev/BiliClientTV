@@ -28,8 +28,6 @@ public class OpusAdapter extends RecyclerView.Adapter<OpusAdapter.OpusHolder> {
 
     Context context;
     ArrayList<Opus> opusList;
-    Opus parsedOpus;
-    long cvid = -1;
 
     public OpusAdapter(Context context, ArrayList<Opus> opusList) {
         this.context = context;
@@ -59,7 +57,6 @@ public class OpusAdapter extends RecyclerView.Adapter<OpusAdapter.OpusHolder> {
         } else {
             holder.itemView.setOnClickListener(v -> TerminalContext.getInstance().enterOpusDetailPage(context, opus.id));
         }
-
 
     }
 

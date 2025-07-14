@@ -133,17 +133,12 @@ public class FavoriteApi {
         for (int i = 0; i < items.length(); i++) {
             JSONObject item = items.getJSONObject(i);
             Opus opus = new Opus();
-            opus.content = item.getString("content");
-            if (item.has("cover")) {
-                opus.cover = item.getString("cover");
-            } else opus.cover = "";
-            if (item.has("title")) {
-                opus.title = item.getString("title");
-            } else {
-                opus.title = item.getString("content");
-            }
+            opus.content = item.optString("content");
+            opus.cover = item.optString("cover");
+            opus.title = item.optString("title");
+            if(opus.title.isEmpty()) opus.title = opus.content;
             opus.id = Long.parseLong(item.getString("opus_id"));
-            opus.pubTime = item.getString("time_text");
+            opus.pubTime = item.optString("time_text");
             list.add(opus);
         }
 

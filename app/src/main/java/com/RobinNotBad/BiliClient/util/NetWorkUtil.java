@@ -13,7 +13,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -48,11 +47,16 @@ import okhttp3.ResponseBody;
 public class NetWorkUtil {
     private static final AtomicReference<OkHttpClient> INSTANCE = new AtomicReference<>();
 
-    private static class Inet4Selector implements Dns {
+    public static class Inet4Selector implements Dns {
         @NonNull
         @Override
         public List<InetAddress> lookup(@NonNull String hostname) throws UnknownHostException {
-            return List.of(Inet4Address.getAllByName(hostname));    //筛选IPV4地址，IPV6请求有异常
+            List<InetAddress> hosts = Dns.SYSTEM.lookup(hostname);
+            List<InetAddress> inet4Hosts = new ArrayList<>();
+            for (InetAddress host: hosts) {
+                if (host.getAddress().length == 4) inet4Hosts.add(host);
+            }
+            return inet4Hosts;    //筛选IPV4地址，IPV6请求有异常
         }
     }
 
@@ -84,14 +88,14 @@ public class NetWorkUtil {
                     })
                     .addInterceptor(new CookieSaveInterceptor())
                     .dns(new Inet4Selector())
-                    .pingInterval(15, TimeUnit.SECONDS)
-                    .connectTimeout(15, TimeUnit.SECONDS)
-                    .readTimeout(15, TimeUnit.SECONDS).build());
+                    .pingInterval(8, TimeUnit.SECONDS)
+                    .connectTimeout(8, TimeUnit.SECONDS)
+                    .readTimeout(16, TimeUnit.SECONDS).build());
         }
         return INSTANCE.get();
     }
 
-    private synchronized static OkHttpClient.Builder setOkHttpSsl(OkHttpClient.Builder okhttpBuilder) {
+    public synchronized static OkHttpClient.Builder setOkHttpSsl(OkHttpClient.Builder okhttpBuilder) {
         if (Build.VERSION.SDK_INT > 22) return okhttpBuilder;
         try {
             @SuppressLint("CustomX509TrustManager") final X509TrustManager trustAllCert =
@@ -142,19 +146,19 @@ public class NetWorkUtil {
     }
 
     public static Response get(String url, ArrayList<String> headers, RedirectHandler redirectHandler) throws IOException {
-        Logu.v("get-url", url);
+        Logu.d("get-url", url);
         OkHttpClient client = getOkHttpInstance();
         Request.Builder requestBuilder = new Request.Builder().url(url).get();
         for (int i = 0; i < headers.size(); i += 2)
-            requestBuilder = requestBuilder.addHeader(headers.get(i), headers.get(i + 1));
+            requestBuilder.addHeader(headers.get(i), headers.get(i + 1));
         if (redirectHandler != null) requestBuilder.tag(RedirectHandler.class, redirectHandler);
         Request request = requestBuilder.build();
         return client.newCall(request).execute();
     }
 
     public static Response post(String url, String data, List<String> headers, String contentType) throws IOException {
-        Logu.v("post-url", url);
-        Logu.v("post-data", data);
+        Logu.d("post-url", url);
+        Logu.d("post-data", data);
         OkHttpClient client = getOkHttpInstance();
         RequestBody body = RequestBody.create(MediaType.parse(contentType + "; charset=utf-8"), data);
         Request.Builder requestBuilder = new Request.Builder().url(url).post(body);
@@ -162,7 +166,7 @@ public class NetWorkUtil {
             String key = headers.get(i);
             String val = headers.get(i + 1);
             if (key.equalsIgnoreCase("Content-Type")) val = contentType;
-            requestBuilder = requestBuilder.addHeader(key, val);
+            requestBuilder.addHeader(key, val);
         }
         Request request = requestBuilder.build();
         return client.newCall(request).execute();
@@ -245,7 +249,7 @@ public class NetWorkUtil {
             if (index == 0) continue;   //如果没有等号，跳过
 
             String key = newCookie.substring(0, index);    //key=
-            Logu.v("newCookie", newCookie);
+            Logu.d("newCookie", newCookie);
 
             boolean added = false;
             for (int i = 0; i < oldCookies.size(); i++) {  //查找旧cookie表有没有
@@ -267,7 +271,7 @@ public class NetWorkUtil {
         }
         //如果一次setCookies都没有，就不要存了， 因为是个空字符串
         if (setCookies.length() >= 2) {
-            Logu.v("save-result", setCookies.substring(0, setCookies.length() - 2));
+            Logu.d("save-result", setCookies.substring(0, setCookies.length() - 2));
             SharedPreferencesUtil.putString(SharedPreferencesUtil.cookies, setCookies.substring(0, setCookies.length() - 2));
             refreshHeaders();
         }

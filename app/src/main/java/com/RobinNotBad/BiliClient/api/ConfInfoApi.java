@@ -1,9 +1,9 @@
 package com.RobinNotBad.BiliClient.api;
 
 import android.net.Uri;
-import android.util.Log;
 
 import com.RobinNotBad.BiliClient.util.FileUtil;
+import com.RobinNotBad.BiliClient.util.Logu;
 import com.RobinNotBad.BiliClient.util.NetWorkUtil;
 import com.RobinNotBad.BiliClient.util.SharedPreferencesUtil;
 import com.RobinNotBad.BiliClient.util.ToolsUtil;
@@ -60,7 +60,7 @@ public class ConfInfoApi {
         String mixin_key;
         int curr = getDateCurr();
         if (SharedPreferencesUtil.getInt("last_wbi", 0) < curr) {    //限制一天一次
-            Log.e("debug", "检查WBI");
+            Logu.d("检查WBI");
             SharedPreferencesUtil.putInt("last_wbi", curr);
 
             mixin_key = ConfInfoApi.getWBIMixinKey(ConfInfoApi.getWBIRawKey());
@@ -69,7 +69,7 @@ public class ConfInfoApi {
 
         String wts = String.valueOf(System.currentTimeMillis() / 1000);
         String calc_str = sortUrlParams(Uri.encode(url_query, "@#&=*+-_.,:!?()/~'%") + "&wts=" + wts) + mixin_key;
-        Log.e("calc_str", calc_str);
+        Logu.d(calc_str);
 
         String w_rid = ToolsUtil.md5(calc_str);
 

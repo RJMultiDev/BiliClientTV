@@ -67,7 +67,7 @@ public class EmoteUtil {
             while (start >= 0) {
                 int end = start + name.length();    //计算得出结束位置
                 ImageSpan imageSpan = new ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM);  //获得一个imagespan  这句不能放while上面，imagespan不可以复用，我也不知道为什么
-                spannableString.setSpan(imageSpan, start, end, SpannableStringBuilder.SPAN_INCLUSIVE_EXCLUSIVE);  //替换
+                spannableString.setSpan(imageSpan, start, end, SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE);  //替换
                 start = origText.indexOf(name, end);    //重新检测起始位置，直到找不到，然后开启下一个循环
             }
         } catch (Exception ignored){}
