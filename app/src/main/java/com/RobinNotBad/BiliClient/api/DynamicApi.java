@@ -301,9 +301,10 @@ public class DynamicApi {
     public static long getDynamicList(List<Dynamic> dynamicList, long offset, long mid, String type) throws IOException, JSONException {
         String url = "https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/"
                 + (mid == 0 ? "all?type=" + type : "space?web_location=333.999&host_mid=" + mid)
-                + (offset == 0 ? "" : "&offset=" + offset);
+                + (offset == 0 ? "" : "&offset=" + offset)
+                + "&features=itemOpusStyle,listOnlyfans,opusBigCover,onlyfansVote,forwardListHidden,decorationCard,commentsNewVersion,onlyfansAssetsV2,ugcDelete,onlyfansQaCard";
 
-        JSONObject all = NetWorkUtil.getJson(DmImgParamUtil.getDmImgParamsUrl(url));
+        JSONObject all = NetWorkUtil.getJson(ConfInfoApi.signWBI(DmImgParamUtil.getDmImgParamsUrl(url)));
         if (all.getInt("code") != 0) throw new JSONException(all.getString("message"));
 
         JSONObject data = all.getJSONObject("data");
@@ -417,6 +418,7 @@ public class DynamicApi {
                 JSONObject major = module_dynamic.getJSONObject("major");
                 String major_type = major.getString("type");
                 dynamic.major_type = major_type;
+                Logu.d(major_type);
                 switch (major_type) {
                     case "MAJOR_TYPE_ARCHIVE":
                         dynamic.major_object = analyzeVideoCard(major.getJSONObject("archive"));

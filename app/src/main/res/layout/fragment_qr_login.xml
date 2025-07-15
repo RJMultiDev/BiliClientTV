@@ -47,7 +47,7 @@
                     android:layout_margin="4dp"
                     android:adjustViewBounds="true"
                     android:scaleType="fitXY"
-                    android:src="@mipmap/loading" />
+                    android:src="@mipmap/loading_qr" />
             </com.google.android.material.card.MaterialCardView>
 
             <TextView

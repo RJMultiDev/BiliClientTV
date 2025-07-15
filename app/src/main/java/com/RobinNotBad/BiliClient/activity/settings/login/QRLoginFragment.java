@@ -96,7 +96,7 @@ public class QRLoginFragment extends Fragment {
 
         qrImageView.setOnClickListener(v -> {
             if (need_refresh) {
-                qrImageView.setImageResource(R.mipmap.loading);
+                qrImageView.setImageResource(R.mipmap.loading_qr);
                 qrImageView.setEnabled(false);
                 refreshQrCode();
             } else {

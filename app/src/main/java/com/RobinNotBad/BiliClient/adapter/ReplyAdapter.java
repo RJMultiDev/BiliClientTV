@@ -221,9 +221,9 @@ public class ReplyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 }
             } else replyHolder.childReplyCard.setVisibility(View.GONE);
 
-            if (reply.upLiked)
-                replyHolder.upLiked.setVisibility(View.VISIBLE);
+            if (reply.upLiked) replyHolder.upLiked.setVisibility(View.VISIBLE);
             else replyHolder.upLiked.setVisibility(View.GONE);
+
             replyHolder.pubDate.setText(reply.pubTime);
 
             if (reply.pictureList != null && !reply.pictureList.isEmpty()) {  //图片显示相关

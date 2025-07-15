@@ -12,6 +12,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
+import android.graphics.drawable.AnimationDrawable;
 import android.media.AudioManager;
 import android.os.BatteryManager;
 import android.os.Build;
@@ -55,7 +56,6 @@ import com.RobinNotBad.BiliClient.util.NetWorkUtil;
 import com.RobinNotBad.BiliClient.util.SharedPreferencesUtil;
 import com.RobinNotBad.BiliClient.util.StringUtil;
 import com.RobinNotBad.BiliClient.util.ToolsUtil;
-import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.greenrobot.eventbus.EventBus;
@@ -118,6 +118,7 @@ public class PlayerActivity extends Activity implements IjkMediaPlayer.OnPrepare
     private LinearLayout card_subtitle, card_danmaku_send;
 
     private ImageView img_loading;
+    private AnimationDrawable anim_loading;
     private ImageButton btn_control, btn_danmaku, btn_loop, btn_rotate, btn_menu, btn_subtitle, btn_danmaku_send;
     private SeekBar seekbar_progress, seekbar_speed;
     private TextView text_progress, text_online, text_volume, loading_text0, loading_text1, text_speed, text_newspeed;
@@ -235,7 +236,9 @@ public class PlayerActivity extends Activity implements IjkMediaPlayer.OnPrepare
         } else batteryView.setVisibility(View.GONE);
 
         loop_enabled = SharedPreferencesUtil.getBoolean("player_loop", false);
-        Glide.with(this).load(R.mipmap.load).into(img_loading);
+        img_loading.setImageResource(R.drawable.loading_tv_shaking);
+        anim_loading = (AnimationDrawable) img_loading.getDrawable();
+        anim_loading.start();
 
         File cachepath = getCacheDir();
         if (!cachepath.exists()) cachepath.mkdirs();
@@ -655,6 +658,7 @@ public class PlayerActivity extends Activity implements IjkMediaPlayer.OnPrepare
             if (what == IMediaPlayer.MEDIA_INFO_BUFFERING_START) {
                 runOnUiThread(() -> {
                     loading_info.setVisibility(View.VISIBLE);
+                    anim_loading.start();
                     loading_text0.setText("正在缓冲");
                     showLoadingSpeed();
                     if (isPlaying) mDanmakuView.pause();
@@ -663,6 +667,7 @@ public class PlayerActivity extends Activity implements IjkMediaPlayer.OnPrepare
                 runOnUiThread(() -> {
                     if (loadingTimer != null) loadingTimer.cancel();
                     loading_info.setVisibility(View.GONE);
+                    anim_loading.stop();
                     if (isPlaying) mDanmakuView.start(ijkPlayer.getCurrentPosition());
                 });
             }
@@ -729,6 +734,7 @@ public class PlayerActivity extends Activity implements IjkMediaPlayer.OnPrepare
         }
 
         loading_info.setVisibility(View.GONE);
+        anim_loading.stop();
         isPlaying = true;
         btn_control.setImageResource(R.drawable.btn_player_pause);
 

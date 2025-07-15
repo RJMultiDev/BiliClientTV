@@ -133,7 +133,7 @@ public class UserInfoApi {
     public static int getUserVideos(long mid, int page, String searchKeyword, List<VideoCard> videoList) throws IOException, JSONException {
         String url = "https://api.bilibili.com/x/space/wbi/arc/search?";
         url += "keyword=" + searchKeyword + "&mid=" + mid + "&order_avoided=true&order=pubdate&pn=" + page
-                + "&ps=30&tid=0&web_location=333.999";
+                + "&ps=40&tid=0&web_location=333.999";
         JSONObject all = NetWorkUtil.getJson(ConfInfoApi.signWBI(DmImgParamUtil.getDmImgParamsUrl(url)));
         if (all.has("data") && !all.isNull("data")) {
             JSONObject data = all.getJSONObject("data");
