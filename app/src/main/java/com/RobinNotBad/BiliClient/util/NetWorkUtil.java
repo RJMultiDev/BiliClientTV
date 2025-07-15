@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,18 +71,20 @@ public class NetWorkUtil {
                         boolean isSslRedirect = false;
                         try {
                             isSslRedirect = location != null && !request.isHttps() && new URI(location).getScheme().equalsIgnoreCase("https") && request.url().host().equalsIgnoreCase(new URI(location).getHost());
-                        } catch (URISyntaxException ignored) {
                         }
-                        if ((response.code() == 301 || response.code() == 302) && location != null && request.url().host().equals("b23.tv") && !isSslRedirect && (handler = request.tag(RedirectHandler.class)) != null) {
-                            handler.handleRedirect(location);
-                        } else if (response.isRedirect() && location != null) {
-                            Request newRequest = request.newBuilder()
-                                    .url(location)
-                                    .build();
+                        catch (URISyntaxException ignored) {}
 
-                            response = chain.proceed(newRequest);
+                        if (response.isRedirect() && location != null) {
+                            if (request.url().host().equals("b23.tv") && !isSslRedirect && (handler = request.tag(RedirectHandler.class)) != null) {
+                                handler.handleRedirect(location);
+                            }
+                            else {
+                                Request newRequest = request.newBuilder()
+                                        .url(location)
+                                        .build();
+                                return chain.proceed(newRequest);
+                            }
                         }
-
                         return response;
                     })
                     .addInterceptor(new CookieSaveInterceptor())
@@ -395,8 +396,9 @@ public class NetWorkUtil {
     }
 
     private static class CookieSaveInterceptor implements Interceptor {
-        @Nullable
-        public Response intercept(@NonNull Chain chain) throws IOException {
+        @NonNull
+        @Override
+        public Response intercept(Chain chain) throws IOException {
             Response response = chain.proceed(chain.request());
             saveCookiesFromResponse(response);
             return response;
