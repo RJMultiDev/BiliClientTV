@@ -18,6 +18,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".BiliTerminal"
@@ -31,12 +32,11 @@
         android:usesCleartextTraffic="true"
         tools:ignore="LockedOrientationActivity,RtlEnabled"
         tools:targetApi="m">
-        <service
-            android:name=".service.DownloadService"
+        <service android:name=".service.DownloadService"
+            android:foregroundServiceType="mediaProjection"
             android:enabled="true"/>
 
-        <provider
-            android:name="androidx.core.content.FileProvider"
+        <provider android:name="androidx.core.content.FileProvider"
             android:authorities="com.RobinNotBad.BiliClient.FileProvider"
             android:exported="false"
             android:grantUriPermissions="true">

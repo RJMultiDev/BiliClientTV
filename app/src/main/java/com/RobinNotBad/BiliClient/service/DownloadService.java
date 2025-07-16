@@ -20,8 +20,8 @@ import com.RobinNotBad.BiliClient.activity.base.InstanceActivity;
 import com.RobinNotBad.BiliClient.activity.video.local.DownloadListActivity;
 import com.RobinNotBad.BiliClient.activity.video.local.LocalListActivity;
 import com.RobinNotBad.BiliClient.api.PlayerApi;
-import com.RobinNotBad.BiliClient.model.DownloadSection;
 import com.RobinNotBad.BiliClient.helper.sql.DownloadSqlHelper;
+import com.RobinNotBad.BiliClient.model.DownloadSection;
 import com.RobinNotBad.BiliClient.model.PlayerData;
 import com.RobinNotBad.BiliClient.model.SubtitleLink;
 import com.RobinNotBad.BiliClient.util.CenterThreadPool;
@@ -59,7 +59,8 @@ public class DownloadService extends Service {
     public static DownloadSection section;
     private static long firstDown;
 
-    final String NOTIFY_CHANNEL_ID = "biliterminal_download";
+    final String NOTIFICATION_CHANNEL_ID = "biliterminal_download";
+    final int FOREGROUND_ID = 1027;
     NotificationCompat.Builder statusBuilder, completionBuilder;
     NotificationManager notifyManager;
 
@@ -85,7 +86,7 @@ public class DownloadService extends Service {
         notifyManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            NotificationChannel channel = new NotificationChannel(NOTIFY_CHANNEL_ID, "哔哩终端下载服务", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "哔哩终端下载服务", NotificationManager.IMPORTANCE_DEFAULT);
             channel.setDescription("哔哩终端下载服务");
             channel.setSound(null,null);
             channel.enableVibration(false);
@@ -95,7 +96,7 @@ public class DownloadService extends Service {
 
         Intent intent = new Intent(this, DownloadListActivity.class);
         @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,0);
-        statusBuilder = new NotificationCompat.Builder(this, NOTIFY_CHANNEL_ID)
+        statusBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.mipmap.icon)
                 .setContentTitle("下载视频中")
                 .setProgress(100,0,false)
@@ -104,7 +105,8 @@ public class DownloadService extends Service {
                 .setVibrate(null)
                 .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        completionBuilder = new NotificationCompat.Builder(this, NOTIFY_CHANNEL_ID)
+
+        completionBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.mipmap.icon)
                 .setContentTitle("下载完成")
                 .setContentIntent(pendingIntent)
@@ -123,6 +125,7 @@ public class DownloadService extends Service {
     @Override
     public int onStartCommand(Intent serviceIntent, int flags, int startId) {
         Logu.d("onStartCommand");
+        startForeground(FOREGROUND_ID, statusBuilder.build());
 
         exitCode = ERR_UNKNOWN;
         startNotifyProgress();
@@ -291,7 +294,7 @@ public class DownloadService extends Service {
             stopSelf();
         });
 
-        return super.onStartCommand(serviceIntent, flags, startId);
+        return Service.START_STICKY;
     }
 
     private void fakeDownload(){
@@ -338,14 +341,14 @@ public class DownloadService extends Service {
 
                 statusBuilder.setContentText(state + "：" + section.name_short);
                 statusBuilder.setProgress(100, (int) (percent * 100),false);
-                notifyManager.notify(1, statusBuilder.build());
+                notifyManager.notify(FOREGROUND_ID, statusBuilder.build());
             }
         }, 500,500);
     }
 
     private void notifyExit(String content){
         MsgUtil.showMsg(content);
-        notifyManager.cancel(1);
+        notifyManager.cancel(FOREGROUND_ID);
         completionBuilder.setContentTitle("下载结束");
         completionBuilder.setContentText(content);
         completionBuilder.setProgress(0,0,false);
@@ -694,7 +697,10 @@ public class DownloadService extends Service {
         firstDown = first;
 
         Context context = BiliTerminal.context;
-        context.startService(new Intent(context, DownloadService.class));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            context.startForegroundService(new Intent(context, DownloadService.class));
+        else
+            context.startService(new Intent(context, DownloadService.class));
     }
 
 }

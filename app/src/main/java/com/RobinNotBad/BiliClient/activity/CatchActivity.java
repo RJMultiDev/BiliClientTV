@@ -20,6 +20,7 @@ import com.RobinNotBad.BiliClient.service.DownloadService;
 import com.RobinNotBad.BiliClient.util.CenterThreadPool;
 import com.RobinNotBad.BiliClient.util.MsgUtil;
 import com.RobinNotBad.BiliClient.util.SharedPreferencesUtil;
+import com.RobinNotBad.BiliClient.util.StringUtil;
 import com.google.android.material.button.MaterialButton;
 
 public class CatchActivity extends BaseActivity {
@@ -96,6 +97,8 @@ public class CatchActivity extends BaseActivity {
             if (openStack) stack_view.setMaxLines(200);
             else stack_view.setMaxLines(5);
         });
+
+        StringUtil.setCopy(stack_view);
     }
 
     @Override

@@ -335,24 +335,21 @@ public class DynamicApi {
         Logu.v("--------------");
         Dynamic dynamic = new Dynamic();
 
-        if (!dynamic_json.isNull("id_str"))
-            dynamic.dynamicId = Long.parseLong(dynamic_json.getString("id_str"));
-        else dynamic.dynamicId = 0;
+        dynamic.dynamicId = Long.parseLong(dynamic_json.optString("id_str","0"));
         Logu.v("id", String.valueOf(dynamic.dynamicId));
         dynamic.type = dynamic_json.getString("type");
         Logu.v("type", dynamic.type);
 
         JSONObject basic = dynamic_json.getJSONObject("basic");
-        String comment_id_str = basic.getString("comment_id_str");
-        if (!comment_id_str.equals("")) dynamic.comment_id = Long.parseLong(comment_id_str);
-        dynamic.comment_type = basic.getInt("comment_type");
+        String comment_id_str = basic.optString("comment_id_str");
+        if (!comment_id_str.isEmpty()) dynamic.comment_id = Long.parseLong(comment_id_str);
+        dynamic.comment_type = basic.optInt("comment_type");
 
         JSONObject modules = dynamic_json.getJSONObject("modules");
 
-
         //发布者
         UserInfo userInfo = new UserInfo();
-        if (modules.has("module_author") && !modules.isNull("module_author")) {
+        if (!modules.isNull("module_author")) {
             JSONObject module_author = modules.getJSONObject("module_author");
             userInfo.mid = module_author.getLong("mid");
             userInfo.name = module_author.getString("name");
@@ -374,11 +371,11 @@ public class DynamicApi {
         }
 
         //动态主体
-        if (modules.has("module_dynamic") && !modules.isNull("module_dynamic")) {
+        if (!modules.isNull("module_dynamic")) {
             JSONObject module_dynamic = modules.getJSONObject("module_dynamic");
 
             //内容
-            if (module_dynamic.has("desc") && !module_dynamic.isNull("desc")) {
+            if (!module_dynamic.isNull("desc")) {
                 StringBuilder dynamic_content = new StringBuilder();
                 ArrayList<Emote> dynamic_emotes = new ArrayList<>();
                 ArrayList<At> ats = new ArrayList<>();
@@ -414,7 +411,7 @@ public class DynamicApi {
             } else dynamic.content = "";
 
             //这里面什么都有，直译为主要的
-            if (module_dynamic.has("major") && !module_dynamic.isNull("major")) {
+            if (!module_dynamic.isNull("major")) {
                 JSONObject major = module_dynamic.getJSONObject("major");
                 String major_type = major.getString("type");
                 dynamic.major_type = major_type;
