@@ -1,5 +1,8 @@
 package com.RobinNotBad.BiliClient.model;
 
+import static com.RobinNotBad.BiliClient.util.LinkUrlUtil.TYPE_USER;
+import static com.RobinNotBad.BiliClient.util.LinkUrlUtil.TYPE_WEB_URL;
+
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
@@ -8,6 +11,9 @@ import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
+
+import com.RobinNotBad.BiliClient.util.StringUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -122,6 +128,12 @@ public class OpusParagraph {
 
                     break;
 
+                case "TEXT_NODE_TYPE_RICH":
+                    JSONObject rich = node.getJSONObject("rich");
+                    int length = stringBuilder.length();
+                    stringBuilder.append(rich.getString("text"));
+                    stringBuilder.setSpan(new StringUtil.LinkClickableSpan(rich.getString("jump_url"), TYPE_WEB_URL, rich.getString("jump_url")), length, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    break;
                 default:
                     stringBuilder.append("[").append(node.optString("type")).append("]");
             }

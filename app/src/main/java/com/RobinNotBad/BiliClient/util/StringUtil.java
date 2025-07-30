@@ -280,7 +280,7 @@ public class StringUtil {
         else return new BitmapDrawable();
     }
 
-    private static class LinkClickableSpan extends ClickableSpan {
+    public static class LinkClickableSpan extends ClickableSpan {
         private final String text;
         /**
          * 真实值

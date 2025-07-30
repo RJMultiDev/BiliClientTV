@@ -4,8 +4,10 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.util.Pair;
 
+import com.RobinNotBad.BiliClient.activity.search.SearchActivity;
 import com.RobinNotBad.BiliClient.activity.user.info.UserInfoActivity;
 
 import org.json.JSONException;
@@ -13,6 +15,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,7 +36,7 @@ public class LinkUrlUtil {
 
     public static void handleWebURL(Context context, String text) {
         try {
-            text = (text.startsWith("http://") || text.startsWith("https://") ? text : "http://" + text);
+            text = (text.startsWith("http://") || text.startsWith("https://") ? text : (text.startsWith("//") ? "http:" + text : "http://" + text));
             // 很傻逼的一系列解析
             URL url = new URL(text);
             String path = url.getPath();
@@ -51,6 +54,12 @@ public class LinkUrlUtil {
                     String lastPathItem = path.replaceAll(".*/([^/]+)/?$", "$1");
                     if (domain.equals("space.bilibili.com")) {
                         lastPathItem = "UID" + lastPathItem;
+                    }
+                    if (domain.equals("search.bilibili.com")) {
+                        Intent intent = new Intent(context, SearchActivity.class);
+                        intent.putExtra("keyword", URLDecoder.decode(url.getQuery().replace("keyword=", "")));
+                        context.startActivity(intent);
+                        return;
                     }
                     Pair<String, Integer> parse = parseId(lastPathItem);
                     if (parse != null) {
