@@ -1,7 +1,7 @@
 package com.RobinNotBad.BiliClient.api;
 
 import android.content.Context;
-import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.util.Log;
 
 import com.RobinNotBad.BiliClient.model.PrivateMessage;
@@ -190,8 +190,8 @@ public class PrivateMsgApi {
     }
 
     // 由于接口特殊性定制的textReplaceEmote
-    public static SpannableString textReplaceEmote(String text, JSONArray emote, float scale, Context context) throws JSONException, ExecutionException, InterruptedException {
-        SpannableString result = new SpannableString(text);
+    public static SpannableStringBuilder textReplaceEmote(String text, JSONArray emote, float scale, Context context) throws JSONException, ExecutionException, InterruptedException {
+        SpannableStringBuilder result = new SpannableStringBuilder(text);
         if (emote != null && emote.length() > 0) {
             for (int i = 0; i < emote.length(); i++) {    //遍历每一个表情包
                 JSONObject key = emote.getJSONObject(i);
@@ -200,7 +200,7 @@ public class PrivateMsgApi {
                 String emoteUrl = key.getString("url");
                 int size = key.getInt("size");  //B站十分贴心的帮你把表情包大小都写好了，快说谢谢蜀黍
 
-                EmoteUtil.replaceSingle(text, result, name, emoteUrl, size, scale, context);
+                EmoteUtil.replaceSingle(result, name, emoteUrl, size, scale, context);
             }
         }
         return result;

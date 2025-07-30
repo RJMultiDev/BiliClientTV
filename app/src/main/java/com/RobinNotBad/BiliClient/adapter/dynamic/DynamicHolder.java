@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
-import android.text.SpannableString;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -33,7 +32,11 @@ import com.RobinNotBad.BiliClient.model.ArticleCard;
 import com.RobinNotBad.BiliClient.model.Dynamic;
 import com.RobinNotBad.BiliClient.model.LiveRoom;
 import com.RobinNotBad.BiliClient.model.VideoCard;
-import com.RobinNotBad.BiliClient.util.*;
+import com.RobinNotBad.BiliClient.util.CenterThreadPool;
+import com.RobinNotBad.BiliClient.util.GlideUtil;
+import com.RobinNotBad.BiliClient.util.MsgUtil;
+import com.RobinNotBad.BiliClient.util.StringUtil;
+import com.RobinNotBad.BiliClient.util.TerminalContext;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -193,7 +196,7 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
         };
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
     public void showDynamic(Context context, Dynamic dynamic, boolean clickable) {    //公用的显示函数 这样修改和调用都方便
         StringUtil.setCopy(content);
         username.setText(dynamic.userInfo.name);
@@ -201,25 +204,11 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
             username.setTextColor(Color.parseColor(dynamic.userInfo.vip_nickname_color));
         }
         if (pubdate != null) pubdate.setText(dynamic.pubTime);
-        if (dynamic.content != null && !dynamic.content.isEmpty()) {
+        if (dynamic.content != null && !TextUtils.isEmpty(dynamic.content)) {
             content.setVisibility(View.VISIBLE);
             content.setText(dynamic.content);
-            if (dynamic.emotes != null) {
-                CenterThreadPool.run(() -> {
-                    try {
-                        SpannableString spannableString = EmoteUtil.textReplaceEmote(dynamic.content, dynamic.emotes, 1.0f, context, content.getText());
-                        CenterThreadPool.runOnUiThread(() -> {
-                            content.setText(spannableString);
-                            StringUtil.setLink(content);
-                            StringUtil.setAtLink(dynamic.ats, content);
-                        });
-                    } catch (Exception e) {
-                        MsgUtil.err(e);
-                    }
-                });
-            }
-            StringUtil.setLink(content);
-            StringUtil.setAtLink(dynamic.ats, content);
+            StringUtil.setCopy(content);
+            content.setOnTouchListener(new StringUtil.ClickableSpanTouchListener());
         } else content.setVisibility(View.GONE);
         Glide.with(BiliTerminal.context).asDrawable().load(GlideUtil.url(dynamic.userInfo.avatar))
                 .transition(GlideUtil.getTransitionOptions())

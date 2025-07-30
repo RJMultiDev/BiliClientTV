@@ -5,7 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -117,7 +117,7 @@ public class PrivateMsgAdapter extends RecyclerView.Adapter<PrivateMsgAdapter.Vi
                     Log.e("", emoteArray.toString());
                     CenterThreadPool.run(() -> {
                         try {
-                            SpannableString contentWithEmote = PrivateMsgApi.textReplaceEmote(msg.content.getString("content"), emoteArray, 1f, context);
+                            SpannableStringBuilder contentWithEmote = PrivateMsgApi.textReplaceEmote(msg.content.getString("content"), emoteArray, 1f, context);
                             ((Activity) context).runOnUiThread(() -> holder.textContentTv.setText(contentWithEmote));
                         } catch (Exception err) {
                             Log.e("", err.toString());

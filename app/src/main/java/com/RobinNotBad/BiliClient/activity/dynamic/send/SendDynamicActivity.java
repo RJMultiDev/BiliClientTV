@@ -3,7 +3,6 @@ package com.RobinNotBad.BiliClient.activity.dynamic.send;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.SpannableString;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,8 +27,6 @@ import com.RobinNotBad.BiliClient.model.ArticleCard;
 import com.RobinNotBad.BiliClient.model.Dynamic;
 import com.RobinNotBad.BiliClient.model.VideoCard;
 import com.RobinNotBad.BiliClient.model.VideoInfo;
-import com.RobinNotBad.BiliClient.util.CenterThreadPool;
-import com.RobinNotBad.BiliClient.util.EmoteUtil;
 import com.RobinNotBad.BiliClient.util.GlideUtil;
 import com.RobinNotBad.BiliClient.util.MsgUtil;
 import com.RobinNotBad.BiliClient.util.SharedPreferencesUtil;
@@ -43,7 +40,6 @@ import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.ExecutionException;
 
 /**
  * 发送动态输入Activity，直接copy的WriteReplyActivity
@@ -114,7 +110,7 @@ public class SendDynamicActivity extends BaseActivity {
         });
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
     private void showChildDyn(View itemView, Dynamic dynamic) {
         TextView username, content;
         ImageView avatar;
@@ -127,23 +123,15 @@ public class SendDynamicActivity extends BaseActivity {
         cell_dynamic_video = extraCard.findViewById(R.id.dynamic_video_child);
         cell_dynamic_article = extraCard.findViewById(R.id.dynamic_article_child);
         cell_dynamic_image = extraCard.findViewById(R.id.dynamic_image_child);
+
         username.setText(dynamic.userInfo.name);
-        if (dynamic.content != null && !dynamic.content.isEmpty()) {
+        if (dynamic.content != null && !TextUtils.isEmpty(dynamic.content)) {
             content.setVisibility(View.VISIBLE);
             content.setText(dynamic.content);
-            if (dynamic.emotes != null) {
-                CenterThreadPool.run(() -> {
-                    SpannableString spannableString = EmoteUtil.textReplaceEmote(dynamic.content, dynamic.emotes, 1.0f, this, content.getText());
-                    CenterThreadPool.runOnUiThread(() -> {
-                        content.setText(spannableString);
-                        StringUtil.setLink(content);
-                        StringUtil.setAtLink(dynamic.ats, content);
-                    });
-                });
-            }
+            StringUtil.setCopy(content);
+            content.setOnTouchListener(new StringUtil.ClickableSpanTouchListener());
         } else content.setVisibility(View.GONE);
-        StringUtil.setLink(content);
-        StringUtil.setAtLink(dynamic.ats, content);
+
         Glide.with(this).load(GlideUtil.url(dynamic.userInfo.avatar))
                 .transition(GlideUtil.getTransitionOptions())
                 .placeholder(R.mipmap.akari)

@@ -20,6 +20,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.Layout;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextUtils;
@@ -63,7 +64,7 @@ public class StringUtil {
             R.mipmap.level_h
     };
 
-    public static Pair<Integer, Integer> appendString(StringBuilder stringBuilder, String str) {
+    public static Pair<Integer, Integer> appendString(SpannableStringBuilder stringBuilder, String str) {
         int startIndex = stringBuilder.length();
         stringBuilder.append(str);
         int endIndex = stringBuilder.length();
@@ -159,7 +160,7 @@ public class StringUtil {
         cm.setPrimaryClip(mClipData);
     }
 
-    public static void setLink(SpannableString spannableString){
+    public static void setLink(SpannableStringBuilder spannableString){
         if (!SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.LINK_ENABLE, true)) return;
         if(TextUtils.isEmpty(spannableString)) return;
 
@@ -205,14 +206,14 @@ public class StringUtil {
         if (!SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.LINK_ENABLE, true)) return;
         for (TextView textView : textViews) {
             if (TextUtils.isEmpty(textView.getText())) continue;
-            SpannableString spannableString = new SpannableString(textView.getText());
+            SpannableStringBuilder spannableString = new SpannableStringBuilder(textView.getText());
             setLink(spannableString);
             textView.setText(spannableString);
             textView.setOnTouchListener(new ClickableSpanTouchListener());
         }
     }
 
-    public static void setSingleAt(SpannableString spannableString, String atName, long atMid){
+    public static void setSingleAt(SpannableStringBuilder spannableString, String atName, long atMid){
         Pattern pattern = Pattern.compile("@" + atName);
         String text = spannableString.toString();
         Matcher matcher = pattern.matcher(text);
@@ -224,6 +225,12 @@ public class StringUtil {
         }
     }
 
+    public static void setSingleAt(SpannableStringBuilder spannableString, At at){
+        spannableString.setSpan(new LinkClickableSpan(spannableString.subSequence(at.start, at.end).toString(),
+                        TYPE_USER, String.valueOf(at.id)),
+                        at.start, at.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+    }
+
     public static void setAtLink(List<At> ats, TextView... textViews) {
         if (ats == null || ats.isEmpty()) return;
         for (TextView textView : textViews) {
@@ -232,8 +239,8 @@ public class StringUtil {
             SpannableString spannableString = new SpannableString(textView.getText());
 
             for (At at : ats) {
-                spannableString.setSpan(new LinkClickableSpan(text.substring(at.textStartIndex, at.textEndIndex), TYPE_USER, String.valueOf(at.rid)),
-                        at.textStartIndex, at.textEndIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableString.setSpan(new LinkClickableSpan(text.substring(at.start, at.end), TYPE_USER, String.valueOf(at.id)),
+                        at.start, at.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
 
             textView.setText(spannableString);
@@ -241,7 +248,7 @@ public class StringUtil {
         }
     }
 
-    public static void setTopSpan(SpannableString spannableString) {
+    public static void setTopSpan(SpannableStringBuilder spannableString) {
         spannableString.setSpan(new ForegroundColorSpan(Color.rgb(207, 75, 95)), 0, ReplyApi.TOP_TIP.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
     }
 

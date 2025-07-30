@@ -1,6 +1,8 @@
 package com.RobinNotBad.BiliClient.model;
 
-import android.text.SpannableString;
+import static com.RobinNotBad.BiliClient.api.ReplyApi.TOP_TIP;
+
+import android.text.SpannableStringBuilder;
 
 import com.RobinNotBad.BiliClient.BiliTerminal;
 import com.RobinNotBad.BiliClient.util.EmoteUtil;
@@ -13,9 +15,9 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static com.RobinNotBad.BiliClient.api.ReplyApi.TOP_TIP;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Locale;
 
 public class Reply implements Serializable {
     public long rpid;
@@ -26,7 +28,7 @@ public class Reply implements Serializable {
     public String ofBvid = "";
     public String pubTime;
     public UserInfo sender;
-    public SpannableString message;
+    public CharSequence message;
     public ArrayList<String> pictureList = new ArrayList<>();
     public int likeCount;
     public boolean upLiked;
@@ -76,7 +78,7 @@ public class Reply implements Serializable {
             }
         }
 
-        SpannableString messageSpannable = new SpannableString((isTop ? TOP_TIP : "")
+        SpannableStringBuilder messageSpannable = new SpannableStringBuilder((isTop ? TOP_TIP : "")
                 + StringUtil.htmlToString(content.getString("message")));
 
         if(isTop) StringUtil.setTopSpan(messageSpannable);
@@ -104,7 +106,6 @@ public class Reply implements Serializable {
         StringUtil.setLink(messageSpannable);
 
         if (content.has("at_name_to_mid") && !content.isNull("at_name_to_mid")) {
-            List<At> ats = new ArrayList<>();
             JSONObject jsonObject = content.getJSONObject("at_name_to_mid");
             Iterator<String> keys = jsonObject.keys();
             while (keys.hasNext()) {

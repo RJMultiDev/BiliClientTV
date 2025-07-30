@@ -178,7 +178,7 @@ public class ReplyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 replyHolder.userName.setMaxLines(3);
             }
 
-            replyHolder.message.setText(reply.message);  //防止加载速度慢时露出鸡脚
+            replyHolder.message.setText(reply.message);
             StringUtil.setCopy(replyHolder.message);
             replyHolder.message.setOnTouchListener(new StringUtil.ClickableSpanTouchListener());
 
