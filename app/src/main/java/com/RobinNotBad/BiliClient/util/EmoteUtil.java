@@ -2,7 +2,6 @@ package com.RobinNotBad.BiliClient.util;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
 
@@ -21,8 +20,8 @@ import java.util.concurrent.ExecutionException;
 //2023-07-23
 
 public class EmoteUtil {
-    public static SpannableString textReplaceEmote(String text, JSONArray emote, float scale, Context context) throws JSONException, ExecutionException, InterruptedException {
-        SpannableString result = new SpannableString(text);
+    public static SpannableStringBuilder textReplaceEmote(String text, JSONArray emote, float scale, Context context) throws JSONException, ExecutionException, InterruptedException {
+        SpannableStringBuilder result = new SpannableStringBuilder(text);
         if (emote != null && emote.length() > 0) {
             for (int i = 0; i < emote.length(); i++) {    //遍历每一个表情包
                 JSONObject key = emote.getJSONObject(i);
@@ -31,14 +30,17 @@ public class EmoteUtil {
                 String emoteUrl = key.getString("url");
                 int size = key.getInt("size");  //B站十分贴心的帮你把表情包大小都写好了，快说谢谢蜀黍
 
-                replaceSingle(text, result, name, emoteUrl, size, scale, context);
+                replaceSingle(result, name, emoteUrl, size, scale, context);
             }
         }
         return result;
     }
 
-    public static SpannableString textReplaceEmote(String text, ArrayList<Emote> emotes, float scale, Context context, CharSequence source) {
-        SpannableString result = (source instanceof SpannableString) ? (SpannableString) source : new SpannableString(text);
+    public static SpannableStringBuilder textReplaceEmote(String text, ArrayList<Emote> emotes, float scale, Context context, CharSequence source) {
+        SpannableStringBuilder result = (source instanceof SpannableStringBuilder)
+                ? (SpannableStringBuilder) source
+                : new SpannableStringBuilder(text);
+
         if (emotes != null && !emotes.isEmpty()) {
             for (int i = 0; i < emotes.size(); i++) {    //遍历每一个表情包
                 Emote key = emotes.get(i);
@@ -47,18 +49,19 @@ public class EmoteUtil {
                 String emoteUrl = key.url;
                 int size = key.size;  //B站十分贴心的帮你把表情包大小都写好了，快说谢谢蜀黍
 
-                replaceSingle(text, result, name, emoteUrl, size, scale, context);
+                replaceSingle(result, name, emoteUrl, size, scale, context);
             }
         }
         return result;
     }
 
-    public static SpannableString textReplaceEmote(String text, ArrayList<Emote> emotes, float scale, Context context) {
+    public static SpannableStringBuilder textReplaceEmote(String text, ArrayList<Emote> emotes, float scale, Context context) {
         return textReplaceEmote(text, emotes, scale, context, null);
     }
 
-    public static void replaceSingle(String origText, SpannableString spannableString, String name, String url, int size, float scale, Context context) {
+    public static void replaceSingle(SpannableStringBuilder spannableString, String name, String url, int size, float scale, Context context) {
         try {
+            String origText = spannableString.toString();
             Drawable drawable = Glide.with(context).asDrawable().load(url).submit().get();  //获得url并通过glide得到一张图片
 
             drawable.setBounds(0, 0, (int) (size * ToolsUtil.sp2px(18) * scale), (int) (size * ToolsUtil.sp2px(18) * scale));  //参考了隔壁腕上哔哩并进行了改进

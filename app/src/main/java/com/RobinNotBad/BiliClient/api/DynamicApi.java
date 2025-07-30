@@ -1,10 +1,12 @@
 package com.RobinNotBad.BiliClient.api;
 
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
 
+import com.RobinNotBad.BiliClient.BiliTerminal;
 import com.RobinNotBad.BiliClient.model.ArticleCard;
 import com.RobinNotBad.BiliClient.model.At;
 import com.RobinNotBad.BiliClient.model.Dynamic;
@@ -14,6 +16,7 @@ import com.RobinNotBad.BiliClient.model.Stats;
 import com.RobinNotBad.BiliClient.model.UserInfo;
 import com.RobinNotBad.BiliClient.model.VideoCard;
 import com.RobinNotBad.BiliClient.util.DmImgParamUtil;
+import com.RobinNotBad.BiliClient.util.EmoteUtil;
 import com.RobinNotBad.BiliClient.util.Logu;
 import com.RobinNotBad.BiliClient.util.MsgUtil;
 import com.RobinNotBad.BiliClient.util.NetWorkUtil;
@@ -376,39 +379,11 @@ public class DynamicApi {
 
             //内容
             if (!module_dynamic.isNull("desc")) {
-                StringBuilder dynamic_content = new StringBuilder();
-                ArrayList<Emote> dynamic_emotes = new ArrayList<>();
-                ArrayList<At> ats = new ArrayList<>();
-
                 JSONObject desc = module_dynamic.getJSONObject("desc");
-                JSONArray rich_text_nodes = desc.getJSONArray("rich_text_nodes");
-                for (int i = 0; i < rich_text_nodes.length(); i++) {
-                    JSONObject rich_text_node = rich_text_nodes.getJSONObject(i);
-                    String type = rich_text_node.getString("type");
-                    switch (type) {
-                        case "RICH_TEXT_NODE_TYPE_EMOJI":
-                            dynamic_content.append(rich_text_node.getString("text"));
-                            JSONObject emoji = rich_text_node.getJSONObject("emoji");
-                            dynamic_emotes.add(new Emote(emoji.getString("text"), emoji.getString("icon_url"), emoji.getInt("size")));
-                            break;
-                        case "RICH_TEXT_NODE_TYPE_AT":
-                            Pair<Integer, Integer> indexs = StringUtil.appendString(dynamic_content, rich_text_node.getString("text"));
-                            ats.add(new At(rich_text_node.getLong("rid"), indexs.first, indexs.second));
-                            break;
-                        case "RICH_TEXT_NODE_TYPE_WEB":
-                            dynamic_content.append(rich_text_node.getString("orig_text"));
-                            break;
-                        case "RICH_TEXT_NODE_TYPE_TEXT":
-                        default:
-                            dynamic_content.append(rich_text_node.getString("text"));
-                            break;
-                    }
-                }
-                dynamic.content = dynamic_content.toString();
-                Logu.v("content", dynamic.content);
-                dynamic.emotes = dynamic_emotes;
-                dynamic.ats = ats;
-            } else dynamic.content = "";
+                JSONArray rich_text_nodes = desc.optJSONArray("rich_text_nodes");
+                dynamic.content = analyzeTextContent(rich_text_nodes);
+            }
+            else dynamic.content = "";
 
             //这里面什么都有，直译为主要的
             if (!module_dynamic.isNull("major")) {
@@ -479,6 +454,25 @@ public class DynamicApi {
                         dynamic.content = (TextUtils.isEmpty(dynamic.content) ? "" : dynamic.content + "\n");
                         break;
 
+                    case "MAJOR_TYPE_OPUS":
+                        JSONObject opusJson = major.getJSONObject("opus");
+                        dynamic.title = opusJson.optString("title");
+                        JSONArray pics = opusJson.optJSONArray("pics");
+                        if(pics != null){
+                            ArrayList<String> opusPicList = new ArrayList<>();
+                            for (int i = 0; i < pics.length(); i++) {
+                                opusPicList.add(pics.getJSONObject(i).optString("url"));
+                            }
+                            dynamic.major_object = opusPicList;
+                        }
+
+                        JSONObject summary = opusJson.optJSONObject("summary");
+                        if(summary != null)
+                            dynamic.content = analyzeTextContent(summary.optJSONArray("rich_text_nodes"));
+                        else dynamic.content = "";
+
+                        break;
+
                     default:
                         dynamic.content = dynamic.content + "\n[*哔哩终端暂时无法查看此动态的附加内容QwQ|类型：" + major_type + "]";
                         break;
@@ -531,6 +525,45 @@ public class DynamicApi {
                 Long.parseLong(jsonObject.getString("aid")),
                 jsonObject.getString("bvid")
         );
+    }
+
+    private static SpannableStringBuilder analyzeTextContent(JSONArray rich_text_nodes){
+        if(rich_text_nodes == null) return new SpannableStringBuilder("[动态内容解析异常]");
+
+        ArrayList<Emote> emoteList = new ArrayList<>();
+        ArrayList<At> atList = new ArrayList<>();
+        SpannableStringBuilder content = new SpannableStringBuilder();
+        for (int i = 0; i < rich_text_nodes.length(); i++) {
+            JSONObject rich_text_node = rich_text_nodes.optJSONObject(i);
+            if(rich_text_node == null) continue;
+            String type = rich_text_node.optString("type");
+            switch (type) {
+                case "RICH_TEXT_NODE_TYPE_EMOJI":
+                    content.append(rich_text_node.optString("text"));
+                    JSONObject emoji = rich_text_node.optJSONObject("emoji");
+                    if(emoji == null) continue;
+                    emoteList.add(new Emote(emoji.optString("text"), emoji.optString("icon_url"), emoji.optInt("size")));
+                    break;
+                case "RICH_TEXT_NODE_TYPE_AT":
+                    Pair<Integer, Integer> indexs = StringUtil.appendString(content, rich_text_node.optString("text"));
+                    atList.add(new At(rich_text_node.optLong("rid"), indexs.first, indexs.second));
+                    break;
+                case "RICH_TEXT_NODE_TYPE_WEB":
+                    content.append(rich_text_node.optString("orig_text"));
+                    break;
+                case "RICH_TEXT_NODE_TYPE_TEXT":
+                default:
+                    content.append(rich_text_node.optString("text"));
+                    break;
+            }
+        }
+
+        EmoteUtil.textReplaceEmote(content.toString(), emoteList, 1.0f, BiliTerminal.context, content);
+        for (At at: atList) {
+            StringUtil.setSingleAt(content, at);
+        }
+
+        return content;
     }
 
     public static class Content {

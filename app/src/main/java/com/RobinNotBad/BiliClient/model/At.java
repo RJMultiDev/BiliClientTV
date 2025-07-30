@@ -6,34 +6,34 @@ import android.os.Parcelable;
 import java.io.Serializable;
 
 public class At implements Parcelable, Serializable {
-    public final long rid;
-    public int textStartIndex;
-    public int textEndIndex;
+    public final long id;
+    public int start;
+    public int end;
     public String name;
 
-    public At(long rid, int startIndex, int endIndex) {
-        this.rid = rid;
-        this.textStartIndex = startIndex;
-        this.textEndIndex = endIndex;
+    public At(long id, int startIndex, int endIndex) {
+        this.id = id;
+        this.start = startIndex;
+        this.end = endIndex;
     }
 
-    public At(long rid, String name) {
-        this.rid = rid;
+    public At(long id, String name) {
+        this.id = id;
         this.name = name;
     }
 
     protected At(Parcel in) {
-        rid = in.readLong();
-        textStartIndex = in.readInt();
-        textEndIndex = in.readInt();
+        id = in.readLong();
+        start = in.readInt();
+        end = in.readInt();
         name = in.readString();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(rid);
-        dest.writeInt(textStartIndex);
-        dest.writeInt(textEndIndex);
+        dest.writeLong(id);
+        dest.writeInt(start);
+        dest.writeInt(end);
         dest.writeString(name);
     }
 

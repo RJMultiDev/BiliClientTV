@@ -1,6 +1,7 @@
 package com.RobinNotBad.BiliClient.api;
 
 import android.annotation.SuppressLint;
+import android.text.SpannableStringBuilder;
 import android.util.Pair;
 
 import com.RobinNotBad.BiliClient.model.At;
@@ -119,7 +120,7 @@ public class VideoInfoApi {
         videoInfo.cover = data.getString("pic");
         Logu.v("封面", videoInfo.cover);
         if (data.has("desc_v2") && !data.isNull("desc_v2")) {
-            StringBuilder sb = new StringBuilder();
+            SpannableStringBuilder sb = new SpannableStringBuilder();
             JSONArray descArray = data.getJSONArray("desc_v2");
             ArrayList<At> ats = new ArrayList<>();
             for (int i = 0; i < descArray.length(); i++) {
