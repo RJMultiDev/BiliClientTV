@@ -6,7 +6,9 @@
     <string name="about_group">官网域名：biliterminal.cn\n交流群：482091687\n备用群：656364457\n测试组：745414928</string>
     <string name="about_wearbili">注意：本软件仅使用了WearBili的旧版页面布局，与WearBili不存在其他关系！\n另：如果你使用的是手表且性能足够，欢迎前往使用Re:WearBili以获得更好的体验！</string>
     <string name="about_opensource">本程序完全开源，代码部分遵循GNU GPL-V3.0协议，布局（UI）部分遵循CC BY-NC-SA协议。\n你可以前往 https://gitee.com/RobinNotBad/BiliClient 获取源代码。</string>
-    <string name="about_source">本程序使用或借鉴了下列项目的部分代码及收集的API：\nWearBili：https://github.com/SpaceXC/WearBili\n腕上哔哩：https://github.com/luern0313/WristBilibili\nBAC Document：https://socialsisteryi.github.io/bilibili-API-collect\n小电视播放器：https://github.com/xinxiangshiicheng/xinxiangshicheng_wearbili_player\n程序的界面借鉴于WearBili的UI部分，设计者为@JesseGary_（已得到授权）\n\n本程序使用的第三方库：\nOkHttp：com.squareup.okhttp3:okhttp\nGlide：com.github.bumptech.glide:glide\nPhotoView：com.github.chrisbanes:PhotoView\nJsoup：org.jsoup:jsoup\nEventBus：org.greenrobot:eventbus\nIJKPlayer：https://github.com/bilibili/ijkplayer\nDanmakuFlameMaster：com.github.ctiao:DanmakuFlameMaster\nGeetest：com.geetest.sensebot:sensebot\nAOSP：https://source.android.google.cn/\n\n软件图标提供者：银狐enlab（原图来自B站）\n其他部分图标来自网络，有修改，版权归原作者所有</string>
+    <string name="about_source">本程序使用或借鉴了下列项目的部分代码及其合法收集的API：\nWearBili：https://github.com/SpaceXC/WearBili\n腕上哔哩：https://github.com/luern0313/WristBilibili\nBAC Document：https://socialsisteryi.github.io/bilibili-API-collect\n小电视播放器：https://github.com/xinxiangshiicheng/xinxiangshicheng_wearbili_player\n程序的界面借鉴于WearBili的UI部分，设计者为@JesseGary_（已得到授权）\n\n本程序使用的第三方库：\nOkHttp：com.squareup.okhttp3:okhttp\nGlide：com.github.bumptech.glide:glide\nPhotoView：com.github.chrisbanes:PhotoView\nJsoup：org.jsoup:jsoup\nEventBus：org.greenrobot:eventbus\nIJKPlayer：https://github.com/bilibili/ijkplayer\nDanmakuFlameMaster：com.github.ctiao:DanmakuFlameMaster\nGeetest：com.geetest.sensebot:sensebot\nAOSP：https://source.android.google.cn/\n\n软件图标提供者：银狐enlab（原图来自B站）\n其他部分图标来自网络，有修改，版权归原作者所有，如有侵权，请联系开发组删除。</string>
+
+    # 旧的免责声明
     <string name="about_to_uncle">本软件开发的目的是使配置较低的安卓手表与老旧手机能够使用B站网页端提供的部分基本功能。本软件基于B站网页端接口运行，不会对任何接口进行恶意轰炸，也不会收集任何用户隐私信息。软件不存在付费功能，代码完全开源，收到的捐赠仅用于软件服务器的日常维护。如果您仍然认为本软件侵犯了您的权利，请联系我们（有事好商量呜呜呜）\n同时，我们也不对学生用户在不恰当的时间、地点使用本软件导致的财产损失（设备被没收）或精神伤害（？）负责。请尽量自控，不要影响到自己的学习和生活哦！</string>
 
     <string name="desc_setup_ui">首次使用，非常建议调整下界面哦~\n调整下面的选项，然后查看预览\n直到对布局满意为止</string>
@@ -210,10 +212,15 @@
     <string name="gt"><![CDATA[>]]></string>
     <string name="percent">%</string>
 
+    # 新版免责声明
+    <string name="fuck_uncle">本项目为开源非盈利性第三方客户端，源码内容公开可查，仅用于技术研究与交流学习目的。软件通过合法途径获取必要数据，不涉及破解、篡改或任何可能干扰原接口服务正常运行的行为。\n本项目与哔哩哔哩及其附属、相关公司无任何关系，所有内容版权及知识产权均归原权利方所有，哔哩终端开发组仅对本项目源码拥有权利。“哔哩哔哩”及其他本项目中涉及到的商标、名称或相关标识均为其所有者财产。\n本项目不主动提供任何原版软件的付费功能或受版权保护的内容，用户需自行承担使用本客户端所产生的风险，开发者不对因使用本项目导致的直接或间接损失负责。\n本项目不会收集任何用户隐私数据、商业敏感数据或其他受权利方保护的数据，所存储的数据均为应用正常使用所必备的内容，不会上传至云端、联网共享、同步或进行盗取行为。\n本项目接收的捐赠仅用于维持公告、更新服务器的运营，不代表任何商业盈利行为，捐赠者行为完全自愿，不存在任何特殊权限或有利益的回报。</string>
+
     <string name="update_tip">如果你是跨版本更新到这个版本的，可以前往官网biliterminal.cn查看过往的更新日志。\n由于Robin即将高三，此版本正式发布后一年内更新速度将会极慢，除非有api变动和大量崩溃之类的严重问题。</string>
 
     #新增功能放到上面，修复问题放下面，方便用户看见
     <string-array name="update_log_items">
+        <item>增加了一健三联功能</item>
+        <item>增加了免责声明的首次突脸</item>
         <item>修复了开屏画面卡死问题（禁用了IPV6）</item>
         <item>修复了首次播放视频为1080P的问题</item>
         <item>优化了少量屎山代码</item>
