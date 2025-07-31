@@ -87,18 +87,20 @@ public class OpusContentAdapter extends RecyclerView.Adapter<OpusContentAdapter.
                 ImageFilterView imageView = (ImageFilterView) holder.itemView;  //图片
 
                 String[] urls = (String[]) paragraphs[realPosition].content;
-                if (urls.length > 1)
-                Glide.with(BiliTerminal.context).asDrawable().load(GlideUtil.url(urls[0])).placeholder(R.mipmap.placeholder)
-                        .transition(GlideUtil.getTransitionOptions())
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .into(imageView);
+                // 为什么有时候图片会是空的
+                if (urls.length > 1) {
+                    Glide.with(BiliTerminal.context).asDrawable().load(GlideUtil.url(urls[0])).placeholder(R.mipmap.placeholder)
+                            .transition(GlideUtil.getTransitionOptions())
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .into(imageView);
 
-                imageView.setOnClickListener(view -> {
-                    Intent intent = new Intent();
-                    intent.setClass(context, ImageViewerActivity.class);
-                    intent.putExtra("imageList", new ArrayList<>(Arrays.asList(urls)));
-                    context.startActivity(intent);
-                });
+                    imageView.setOnClickListener(view -> {
+                        Intent intent = new Intent();
+                        intent.setClass(context, ImageViewerActivity.class);
+                        intent.putExtra("imageList", new ArrayList<>(Arrays.asList(urls)));
+                        context.startActivity(intent);
+                    });
+                }
                 break;
 
             case -1:
