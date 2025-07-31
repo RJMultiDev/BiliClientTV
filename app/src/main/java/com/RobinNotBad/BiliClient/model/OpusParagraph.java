@@ -158,9 +158,10 @@ public class OpusParagraph {
 
                 case "TEXT_NODE_TYPE_RICH":
                     JSONObject rich = node.getJSONObject("rich");
-                    int length = stringBuilder.length();
                     stringBuilder.append(rich.getString("text"));
-                    stringBuilder.setSpan(new StringUtil.LinkClickableSpan(rich.getString("jump_url"), TYPE_WEB_URL, rich.getString("jump_url")), length, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    if(rich.has("jump_url")) {
+                        stringBuilder.setSpan(new StringUtil.LinkClickableSpan(rich.getString("jump_url"), TYPE_WEB_URL, rich.getString("jump_url")), stringBuilder.length() - rich.getString("text").length(), stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
                     break;
                 default:
                     stringBuilder.append("[").append(node.optString("type")).append("]");

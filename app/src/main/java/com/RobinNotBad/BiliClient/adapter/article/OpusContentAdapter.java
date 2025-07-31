@@ -87,6 +87,7 @@ public class OpusContentAdapter extends RecyclerView.Adapter<OpusContentAdapter.
                 ImageFilterView imageView = (ImageFilterView) holder.itemView;  //图片
 
                 String[] urls = (String[]) paragraphs[realPosition].content;
+                if (urls.length > 1)
                 Glide.with(BiliTerminal.context).asDrawable().load(GlideUtil.url(urls[0])).placeholder(R.mipmap.placeholder)
                         .transition(GlideUtil.getTransitionOptions())
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
