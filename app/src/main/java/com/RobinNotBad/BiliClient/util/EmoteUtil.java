@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
 
+import com.RobinNotBad.BiliClient.BiliTerminal;
 import com.RobinNotBad.BiliClient.model.Emote;
 import com.bumptech.glide.Glide;
 
@@ -74,6 +75,15 @@ public class EmoteUtil {
                 start = origText.indexOf(name, end);    //重新检测起始位置，直到找不到，然后开启下一个循环
             }
         } catch (Exception ignored){}
+    }
+
+    public static void replaceSingle(SpannableStringBuilder spannableString, String url, int size, int start, int end, float scale) {
+        try {
+            Drawable drawable = Glide.with(BiliTerminal.context).asDrawable().load(url).submit().get();
+            drawable.setBounds(0, 0, (int) (size * ToolsUtil.sp2px(18) * scale), (int) (size * ToolsUtil.sp2px(18) * scale));
+            ImageSpan imageSpan = new ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM);
+            spannableString.setSpan(imageSpan, start, end, SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE);
+        } catch (Exception ignored) {}
     }
 
 }

@@ -1,6 +1,5 @@
 package com.RobinNotBad.BiliClient.model;
 
-import static com.RobinNotBad.BiliClient.util.LinkUrlUtil.TYPE_USER;
 import static com.RobinNotBad.BiliClient.util.LinkUrlUtil.TYPE_WEB_URL;
 
 import android.graphics.Color;
@@ -11,8 +10,8 @@ import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
-import android.util.Log;
 
+import com.RobinNotBad.BiliClient.util.EmoteUtil;
 import com.RobinNotBad.BiliClient.util.StringUtil;
 
 import org.json.JSONArray;
@@ -25,7 +24,6 @@ public class OpusParagraph {
     public static final int TYPE_DIVIDER = 3;
     public static final int TYPE_TEXT_REGULAR = 4;
     public static final int TYPE_LIST = 5;
-    public static final int TYPE_OPUS = 6;
 
     public static final int LIST_STYLE_NUMBER = 1;
     public static final int LIST_STYLE_DOT = 2;
@@ -55,9 +53,6 @@ public class OpusParagraph {
             case TYPE_LIST:
                 this.content = analyzeList(para.optJSONObject("list"));
                 break;
-            case TYPE_OPUS:
-                this.content = analyzeOpus(para.optJSONArray("data"));
-                break;
             default:
                 this.content = "[无法识别段落：" + type + "]";
         }
@@ -84,30 +79,6 @@ public class OpusParagraph {
             stringBuilder.append(analyzeText(item, true));
         }
 
-        return stringBuilder;
-    }
-
-    public CharSequence analyzeOpus(JSONArray rich_list) throws JSONException{
-        if(rich_list == null) return "";
-        SpannableStringBuilder stringBuilder = new SpannableStringBuilder();
-        for (int i = 0;i < rich_list.length();i++){
-            JSONObject rich = rich_list.getJSONObject(i);
-            switch (rich.getString("type")){
-                case "RICH_TEXT_NODE_TYPE_AT":
-                    stringBuilder.append(rich.getString("text"));
-                    At at = new At(rich.optLong("rid"), stringBuilder.length() - rich.getString("text").length(), stringBuilder.length());
-                    StringUtil.setSingleAt(stringBuilder, at);
-                    break;
-                case "RICH_TEXT_NODE_TYPE_TOPIC":
-                    stringBuilder.append(rich.getString("text"));
-                    stringBuilder.setSpan(new StringUtil.LinkClickableSpan(rich.getString("jump_url"), TYPE_WEB_URL, rich.getString("jump_url")), stringBuilder.length() - rich.getString("text").length(), stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    break;
-                case "RICH_TEXT_NODE_TYPE_TEXT":
-                default:
-                    stringBuilder.append(rich.getString("orig_text"));
-                    break;
-            }
-        }
         return stringBuilder;
     }
 
@@ -160,7 +131,15 @@ public class OpusParagraph {
                     JSONObject rich = node.getJSONObject("rich");
                     int length = stringBuilder.length();
                     stringBuilder.append(rich.getString("text"));
-                    stringBuilder.setSpan(new StringUtil.LinkClickableSpan(rich.getString("jump_url"), TYPE_WEB_URL, rich.getString("jump_url")), length, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    switch (rich.optString("type")) {
+                        case "RICH_TEXT_NODE_TYPE_EMOJI":
+                            JSONObject emoji = rich.getJSONObject("emoji");
+                            EmoteUtil.replaceSingle(stringBuilder, emoji.optString("icon_url"), emoji.optInt("size"), length, stringBuilder.length(), 1.0f);
+                            break;
+                        case "RICH_TEXT_NODE_TYPE_RICH":  //TODO:忘记这个叫什么名字了，根据记忆应该是这个，如果不对请调整
+                            stringBuilder.setSpan(new StringUtil.LinkClickableSpan(rich.optString("jump_url"), TYPE_WEB_URL, rich.getString("jump_url")), length, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            break;
+                    }
                     break;
                 default:
                     stringBuilder.append("[").append(node.optString("type")).append("]");
