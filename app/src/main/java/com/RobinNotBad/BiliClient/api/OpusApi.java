@@ -25,17 +25,18 @@ public class OpusApi {
         Opus opus = new Opus();
         opus.type = Opus.TYPE_DYNAMIC;
 
-        // 这里改成了直接通过接口获取详情
-        // Robin之前用的从HTML提取JSON，方向明显错了
-
         opus.id = id;
-        String url = "https://www.bilibili.com/opus/" + id; // 别改成https
+        String url;
+        if (id > 100000000) url = "https://www.bilibili.com/opus/" + id; // 别问，问就是动态和专栏都被统一了，判断不了类型，只能判断id长度了。能用。
+        else url = "https://www.bilibili.com/read/cv" + id;
         try {
             Response response = NetWorkUtil.get(url);
+            if (id <= 100000000) response = NetWorkUtil.get(response.headers().get("location")); // 访问/read/cv[id]的话会重定向到/opus/，这里要手动“重定向”，因为OkHTTP不认。
             ResponseBody responseBody = response.body();
             if(responseBody == null) return opus;
 
             String html = responseBody.string();
+
             JSONObject detail = new JSONObject(JsonUtil.search(html, "detail", ""));  //效率不高 能用就行 死去的jsonUtil居然还能发光发热
 
             opus.commentId = Integer.parseInt(detail.optString("comment_id_str", "0"));
@@ -72,7 +73,7 @@ public class OpusApi {
                 }
             }
             opus.stats = new Stats();
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e){ // 取不出来的时候，会重定向，但重定向的域名是//开头的，会报错
             url = "https://api.bilibili.com/x/polymer/web-dynamic/v1/detail??";
             url += "timezone_offset=-480&platform=web&gaia_source=main_web&id=" + id + "&features=itemOpusStyle,opusBigCover,onlyfansVote,endFooterHidden,decorationCard,onlyfansAssetsV2,ugcDelete,onlyfansQaCard,editable,opusPrivateVisible,avatarAutoTheme&web_location=333.1368&x-bili-device-req-json=%7B%22platform%22:%22web%22,%22device%22:%22pc%22%7D&x-bili-web-req-json=%7B%22spm_id%22:%22333.1368%22%7D";
             Response response = NetWorkUtil.get(ConfInfoApi.signWBI(url));
