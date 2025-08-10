@@ -48,6 +48,9 @@ public class VideoCardAdapter extends RecyclerView.Adapter<VideoCardHolder> {
         VideoCard videoCard = videoCardList.get(position);
         holder.showVideoCard(videoCard, context);    //此函数在VideoCardHolder里
 
+        holder.itemView.setFocusable(true);
+        holder.itemView.setClickable(true);
+
         holder.itemView.setOnClickListener(view -> {
             switch (videoCard.type) {
                 case "video":

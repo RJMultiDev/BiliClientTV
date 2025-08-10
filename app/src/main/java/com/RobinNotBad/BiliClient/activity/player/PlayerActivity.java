@@ -1593,6 +1593,15 @@ public class PlayerActivity extends Activity implements IjkMediaPlayer.OnPrepare
             case KeyEvent.KEYCODE_DPAD_CENTER:
                 controlVideo();
                 break;
+            case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+                controlVideo();
+                break;
+            case KeyEvent.KEYCODE_MEDIA_PLAY:
+                if (!isPlaying) controlVideo();
+                break;
+            case KeyEvent.KEYCODE_MEDIA_PAUSE:
+                if (isPlaying) controlVideo();
+                break;
             case KeyEvent.KEYCODE_DPAD_LEFT:
                 ijkPlayer.seekTo(ijkPlayer.getCurrentPosition() - 10000L);
                 break;
