@@ -48,6 +48,9 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdap
     public void onBindViewHolder(@NonNull BtnListHolder holder, int position) {
         holder.show(historyList.get(position));
 
+        holder.itemView.setFocusable(true);
+        holder.itemView.setClickable(true);
+
         holder.itemView.setOnClickListener(view -> {
             if (clickListener != null) {
                 clickListener.onItemClick(position);

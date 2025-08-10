@@ -51,6 +51,9 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.Holder
         }
         holder.desc.setText(userList.get(position).sign);
 
+        holder.itemView.setFocusable(true);
+        holder.itemView.setClickable(true);
+
         if (userList.get(position).avatar.isEmpty()) {
             holder.avatar.setVisibility(View.GONE);
             holder.desc.setSingleLine(false);

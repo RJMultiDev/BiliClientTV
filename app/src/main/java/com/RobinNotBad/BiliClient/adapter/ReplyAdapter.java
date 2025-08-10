@@ -133,6 +133,9 @@ public class ReplyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             ReplyHolder replyHolder = (ReplyHolder) holder;
             Reply reply = replyList.get(realPosition);
 
+            replyHolder.itemView.setFocusable(true);
+            replyHolder.itemView.setClickable(true);
+
             Glide.with(BiliTerminal.context).asDrawable().load(GlideUtil.url(reply.sender.avatar))
                     .transition(GlideUtil.getTransitionOptions())
                     .placeholder(R.mipmap.akari)
@@ -194,6 +197,7 @@ public class ReplyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             if (reply.childCount != 0 && !(realPosition == 0 && isDetail)) {
                 replyHolder.childReplyCard.setVisibility(View.VISIBLE);
+                replyHolder.itemView.setOnClickListener((view) -> startReplyInfoActivity(reply));
 
                 if (reply.upReplied)
                     replyHolder.childCount.setText("UP主在内 共" + reply.childCount + "条回复");

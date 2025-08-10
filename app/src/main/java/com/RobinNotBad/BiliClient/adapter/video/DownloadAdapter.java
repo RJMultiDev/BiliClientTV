@@ -69,6 +69,10 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.Downlo
 
         //holder.showLocalVideo(downloadList.get(position), context);
 
+        holder.itemView.setFocusable(true);
+        holder.itemView.setClickable(true);
+        holder.itemView.setBackgroundResource(R.color.card_bg_selector);
+
         holder.itemView.setOnClickListener(view -> {
             if(clickListener!=null) clickListener.onItemClick(position - 1);
         });

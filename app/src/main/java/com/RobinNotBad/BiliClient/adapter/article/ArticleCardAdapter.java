@@ -43,6 +43,9 @@ public class ArticleCardAdapter extends RecyclerView.Adapter<ArticleCardHolder> 
         ArticleCard articleCard = articleCardList.get(position);
         holder.showArticleCard(articleCard, context);
 
+        holder.itemView.setFocusable(true);
+        holder.itemView.setClickable(true);
+
         holder.itemView.setOnClickListener(view -> TerminalContext.getInstance().enterArticleDetailPage(context, articleCard.id));
 
         holder.itemView.setOnLongClickListener(view -> {

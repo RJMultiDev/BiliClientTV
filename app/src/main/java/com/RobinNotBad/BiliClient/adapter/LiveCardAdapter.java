@@ -57,6 +57,9 @@ public class LiveCardAdapter extends RecyclerView.Adapter<VideoCardHolder> {
 
         holder.showVideoCard(videoCard, context);    //此函数在VideoCardHolder里
 
+        holder.itemView.setFocusable(true);
+        holder.itemView.setClickable(true);
+
         holder.itemView.setOnClickListener(view -> TerminalContext.getInstance().enterLiveDetailPage(context, room.roomid));
 
         holder.itemView.setOnLongClickListener(view -> {

@@ -51,6 +51,8 @@ public class PageChooseAdapter extends RecyclerView.Adapter<PageChooseAdapter.Ho
 
         holder.folder_name.setText(nameList.get(position));
 
+        holder.itemView.setFocusable(true);
+        holder.itemView.setClickable(true);
 
         holder.itemView.setOnClickListener(view -> {
             if (onItemClickListener != null) onItemClickListener.onItemClick(position);

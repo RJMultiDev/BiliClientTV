@@ -47,6 +47,8 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
         holder.content.setText(extra_start == -1 ? announcement.content : announcement.content.substring(0, extra_start) + "[附加内容]");
         holder.info.setText("ID:" + announcement.id + " | " + announcement.ctime);
 
+        holder.cardView.setFocusable(true);
+        holder.cardView.setClickable(true);
         holder.cardView.setOnClickListener(view -> MsgUtil.showText(announcement.title, announcement.content));
 
     }

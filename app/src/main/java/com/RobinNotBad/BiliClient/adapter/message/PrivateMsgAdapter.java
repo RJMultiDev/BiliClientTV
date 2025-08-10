@@ -94,6 +94,10 @@ public class PrivateMsgAdapter extends RecyclerView.Adapter<PrivateMsgAdapter.Vi
         PrivateMessage msg = mPrivateMsgList.get(position);
         try {
             holder.nameTv.setText(msg.name);
+
+            holder.itemView.setFocusable(true);
+            holder.itemView.setClickable(true);
+
             if (selfUid == -1) {
                 selfUid = SharedPreferencesUtil.getLong(SharedPreferencesUtil.mid, -1);
             }

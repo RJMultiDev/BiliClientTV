@@ -69,6 +69,10 @@ public class LocalVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             int realPosition = position - 1;
             ((LocalVideoHolder)holder).showLocalVideo(localVideoList.get(realPosition), context);    //此函数在VideoCardHolder里
 
+            holder.itemView.setFocusable(true);
+            holder.itemView.setClickable(true);
+            holder.itemView.setBackgroundResource(R.color.card_bg_selector);
+
             holder.itemView.setOnClickListener(view -> {
                 LocalVideo localVideo = localVideoList.get(realPosition);
                 if (localVideo.videoFileList.size() == 1) {
