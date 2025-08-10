@@ -38,6 +38,9 @@ public class SeriesCardAdapter extends RecyclerView.Adapter<VideoCardHolder> {
         VideoCard videoCard = new VideoCard(series.title, series.intro, series.total, series.cover, 0, "", "series");
         holder.showVideoCard(videoCard, context);    //此函数在VideoCardHolder里
 
+        holder.itemView.setFocusable(true);
+        holder.itemView.setClickable(true);
+
         holder.itemView.setOnClickListener(view -> {
             Intent intent = new Intent(context, SeriesInfoActivity.class);
             intent.putExtra("type", series.type);

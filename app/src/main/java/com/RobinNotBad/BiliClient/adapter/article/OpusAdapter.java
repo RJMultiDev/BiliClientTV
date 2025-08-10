@@ -52,6 +52,10 @@ public class OpusAdapter extends RecyclerView.Adapter<OpusAdapter.OpusHolder> {
                 .apply(RequestOptions.bitmapTransform(new RoundedCorners(ToolsUtil.dp2px(5))))
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(holder.coverView);
+
+        holder.itemView.setFocusable(true);
+        holder.itemView.setClickable(true);
+
         if (opus.content.equals("内容失效")) {
             holder.itemView.setOnClickListener(v -> MsgUtil.showMsg("内容失效，无法打开"));
         } else {

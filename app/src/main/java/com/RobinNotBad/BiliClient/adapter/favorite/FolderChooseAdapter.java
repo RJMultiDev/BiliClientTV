@@ -57,6 +57,9 @@ public class FolderChooseAdapter extends RecyclerView.Adapter<FolderChooseAdapte
 
         MaterialCardView cardView = (MaterialCardView) holder.itemView;
 
+        holder.itemView.setFocusable(true);
+        holder.itemView.setClickable(true);
+
         holder.folder_name.setText(folderList.get(position));
         setCardView(cardView, chooseState.get(position));
 

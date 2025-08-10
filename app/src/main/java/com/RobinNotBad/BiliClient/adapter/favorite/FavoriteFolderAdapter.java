@@ -74,6 +74,10 @@ public class FavoriteFolderAdapter extends RecyclerView.Adapter<FavoriteFolderAd
                     .format(DecodeFormat.PREFER_RGB_565)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(holder.cover);
+
+            holder.itemView.setFocusable(true);
+            holder.itemView.setClickable(true);
+
             holder.itemView.setOnClickListener(view -> {
                 Intent intent = new Intent();
                 intent.setClass(context, FavoriteVideoListActivity.class);

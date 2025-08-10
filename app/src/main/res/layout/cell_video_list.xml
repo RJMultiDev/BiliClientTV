@@ -4,7 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/activity_padding_horizontal"
-    android:layout_marginVertical="@dimen/list_margin_vertical">
+    android:layout_marginVertical="@dimen/list_margin_vertical"
+    android:focusable="true"
+    android:clickable="true"
+    app:cardBackgroundColor="@color/card_bg_selector">
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -87,6 +87,10 @@ public class PrivateMsgSessionsAdapter extends RecyclerView.Adapter<PrivateMsgSe
                     .placeholder(R.mipmap.akari)
                     .apply(RequestOptions.circleCropTransform())
                     .into(holder.avatarView);
+
+            holder.itemView.setFocusable(true);
+            holder.itemView.setClickable(true);
+
             holder.itemView.setOnClickListener(view -> {
                 Intent intent = new Intent(context, PrivateMsgActivity.class);
                 intent.putExtra("uid", msgContent.talkerUid);

@@ -57,6 +57,9 @@ public class QualityChooseAdapter extends RecyclerView.Adapter<QualityChooseAdap
 
         holder.folder_name.setText(nameList.get(position));
 
+        holder.itemView.setFocusable(true);
+        holder.itemView.setClickable(true);
+
         holder.itemView.setOnClickListener(view -> {
             if (onItemClickListener != null) onItemClickListener.onItemClick(position);
         });

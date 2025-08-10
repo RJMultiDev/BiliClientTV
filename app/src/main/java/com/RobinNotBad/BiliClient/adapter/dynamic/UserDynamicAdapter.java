@@ -78,6 +78,9 @@ public class UserDynamicAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             int realPosition = position - 1;
             DynamicHolder dynamicHolder = (DynamicHolder) holder;
 
+            dynamicHolder.itemView.setFocusable(true);
+            dynamicHolder.itemView.setClickable(true);
+
             dynamicHolder.showDynamic(context, dynamicList.get(realPosition), true);
 
             if (dynamicList.get(realPosition).dynamic_forward != null) {

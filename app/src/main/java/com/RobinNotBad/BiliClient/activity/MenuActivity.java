@@ -141,6 +141,12 @@ public class MenuActivity extends BaseActivity {
             layout.addView(materialButton, params);
         }
 
+        if (layout.getChildCount() > 0) {
+            android.view.View first = layout.getChildAt(0);
+            first.setFocusable(true);
+            first.requestFocus();
+        }
+
         Log.e("debug", "MenuActivity onCreate in: " + (System.currentTimeMillis() - time));
     }
 

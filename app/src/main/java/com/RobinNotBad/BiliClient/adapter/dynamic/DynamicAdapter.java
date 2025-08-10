@@ -78,6 +78,8 @@ public class DynamicAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             long time = System.currentTimeMillis();
             position--;
             DynamicHolder dynamicHolder = (DynamicHolder) holder;
+            dynamicHolder.itemView.setFocusable(true);
+            dynamicHolder.itemView.setClickable(true);
             dynamicHolder.showDynamic(context, dynamicList.get(position), true);      //该函数在DynamicHolder里
 
             if (dynamicList.get(position).dynamic_forward != null) {

@@ -72,6 +72,10 @@ public class SettingsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         SettingSection settingSection = list.get(position);
+
+        holder.itemView.setFocusable(true);
+        holder.itemView.setClickable(true);
+
         switch (holder.getItemViewType()) {
             case -1:
                 break;
