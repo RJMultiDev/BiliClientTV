@@ -64,9 +64,7 @@ public class BaseActivity extends AppCompatActivity {
     //调整页面边距，参考了hankmi的方式
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        setRequestedOrientation(SharedPreferencesUtil.getBoolean("ui_landscape", false)
-                ? ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-                : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 
         super.onCreate(savedInstanceState);
 
