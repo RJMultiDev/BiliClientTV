@@ -17,7 +17,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "rj.bilitv"
+        applicationId "rj.bilifortv"
         minSdk 14
         //noinspection ExpiredTargetSdkVersion
         targetSdk 26
