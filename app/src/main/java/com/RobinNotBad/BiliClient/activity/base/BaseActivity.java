@@ -246,9 +246,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public RecyclerView.LayoutManager getLayoutManager() {
-        return SharedPreferencesUtil.getBoolean("ui_landscape", false) && !force_single_column
-                ? new CustomGridManager(this, 3)
-                : new CustomLinearManager(this);
+        return new CustomGridManager(this, 3);
     }
 
     public void setForceSingleColumn() {
