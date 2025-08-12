@@ -40,7 +40,7 @@
             android:enabled="true"/>
 
         <provider android:name="androidx.core.content.FileProvider"
-            android:authorities="com.RobinNotBad.BiliClient.FileProvider"
+            android:authorities="rj.bilifortv.FileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
