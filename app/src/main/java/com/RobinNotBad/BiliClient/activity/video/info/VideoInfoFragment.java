@@ -213,7 +213,7 @@ public class VideoInfoFragment extends BaseFragment {
         MaterialCardView exclusiveTip = rootview.findViewById(R.id.exclusiveTip);
         RecyclerView up_recyclerView = rootview.findViewById(R.id.up_recyclerView);
         TextView exclusiveTipLabel = rootview.findViewById(R.id.exclusiveTipLabel);
-        TextView viewCount = rootview.findViewById(R.id.viewsCount);
+        TextView viewCount = rootview.findViewById(R.id.viewCount);
         TextView timeText = rootview.findViewById(R.id.timeText);
         TextView durationText = rootview.findViewById(R.id.durationText);
         MaterialButton play = rootview.findViewById(R.id.play);

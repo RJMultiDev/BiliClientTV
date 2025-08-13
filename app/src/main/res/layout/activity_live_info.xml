@@ -88,15 +88,15 @@
                 tools:listitem="@layout/cell_up_list" />
 
             <ImageView
-                android:id="@+id/viewsIcon"
+                android:id="@+id/viewIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:adjustViewBounds="true"
                 android:alpha="0.5"
                 android:src="@drawable/icon_play_12"
-                app:layout_constraintBottom_toBottomOf="@+id/viewsCount"
+                app:layout_constraintBottom_toBottomOf="@+id/viewCount"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/viewsCount" />
+                app:layout_constraintTop_toTopOf="@+id/viewCount" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/qualities"
@@ -191,7 +191,7 @@
                 app:layout_constraintTop_toBottomOf="@id/hosts" />
 
             <TextView
-                android:id="@+id/viewsCount"
+                android:id="@+id/viewCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
@@ -200,7 +200,7 @@
                 android:text="114人在线"
                 android:textColor="#fff"
                 android:textSize="12sp"
-                app:layout_constraintStart_toEndOf="@+id/viewsIcon"
+                app:layout_constraintStart_toEndOf="@+id/viewIcon"
                 app:layout_constraintTop_toBottomOf="@+id/play" />
 
             <ImageView
@@ -210,7 +210,7 @@
                 android:src="@drawable/icon_time"
                 android:alpha="0.5"
                 app:layout_constraintTop_toTopOf="@+id/durationText"
-                app:layout_constraintStart_toStartOf="@+id/viewsIcon"
+                app:layout_constraintStart_toStartOf="@+id/viewIcon"
                 app:layout_constraintBottom_toBottomOf="@+id/durationText"
                 android:id="@+id/timeIcon" />
 
@@ -229,7 +229,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/timeIcon"
-                app:layout_constraintTop_toBottomOf="@id/viewsCount" />
+                app:layout_constraintTop_toBottomOf="@id/viewCount" />
 
             <ImageView
                 android:layout_height="0dp"
@@ -238,7 +238,7 @@
                 android:src="@drawable/icon_bv"
                 android:alpha="0.5"
                 app:layout_constraintTop_toTopOf="@+id/idText"
-                app:layout_constraintStart_toStartOf="@+id/viewsIcon"
+                app:layout_constraintStart_toStartOf="@+id/viewIcon"
                 app:layout_constraintBottom_toBottomOf="@+id/idText"
                 android:id="@+id/bvidIcon" />
 

@@ -3,6 +3,7 @@ package com.RobinNotBad.BiliClient.adapter.article;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 
 //文章内容Adapter by RobinNotBad
 
@@ -84,11 +86,13 @@ public class OpusContentAdapter extends RecyclerView.Adapter<OpusContentAdapter.
         switch (getItemViewType(position)) {
             case OpusParagraph.TYPE_PIC:
             case OpusParagraph.TYPE_DIVIDER:
-                ImageFilterView imageView = (ImageFilterView) holder.itemView;  //图片
+                ImageFilterView imageView = holder.itemView.findViewById(R.id.imageView);  //图片
+                TextView imageCount = holder.itemView.findViewById(R.id.imageCount);  //图片
 
                 String[] urls = (String[]) paragraphs[realPosition].content;
                 // 为什么有时候图片会是空的
-                if (urls.length > 1) {
+                int length = urls.length;
+                if (length != 0) {
                     Glide.with(BiliTerminal.context).asDrawable().load(GlideUtil.url(urls[0])).placeholder(R.mipmap.placeholder)
                             .transition(GlideUtil.getTransitionOptions())
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -100,6 +104,8 @@ public class OpusContentAdapter extends RecyclerView.Adapter<OpusContentAdapter.
                         intent.putExtra("imageList", new ArrayList<>(Arrays.asList(urls)));
                         context.startActivity(intent);
                     });
+
+                    if(length > 1) imageCount.setText(String.format(Locale.CHINA,"共%d张图片", length));
                 }
                 break;
 
@@ -110,7 +116,12 @@ public class OpusContentAdapter extends RecyclerView.Adapter<OpusContentAdapter.
                 TextView upName = holder.itemView.findViewById(R.id.upInfo_Name);
                 MaterialCardView upCard = holder.itemView.findViewById(R.id.upInfo);
 
-                StringUtil.setCopy(title);
+                if(!TextUtils.isEmpty(article.title)) {
+                    title.setVisibility(View.VISIBLE);
+                    title.setText(article.title);
+                    StringUtil.setCopy(title);
+                }
+                else title.setVisibility(View.GONE);
 
                 upName.setText(article.upInfo.name);
                 if (article.cover.isEmpty()) cover.setVisibility(View.GONE);
@@ -134,9 +145,7 @@ public class OpusContentAdapter extends RecyclerView.Adapter<OpusContentAdapter.
                     context.startActivity(intent);
                 });
 
-                if (article.type == Opus.TYPE_DYNAMIC){
-                    holder.itemView.findViewById(R.id.like_coin_fav).setVisibility(View.GONE);
-                }
+                holder.itemView.findViewById(R.id.like_coin_fav).setVisibility(View.GONE);
 
                 ImageButton like = holder.itemView.findViewById(R.id.btn_like);
                 ImageButton coin = holder.itemView.findViewById(R.id.btn_coin);
@@ -228,21 +237,22 @@ public class OpusContentAdapter extends RecyclerView.Adapter<OpusContentAdapter.
                     }
                 }));
 
-                title.setText(article.title);
                 break;
 
             case -2:
-                TextView views = holder.itemView.findViewById(R.id.viewsCount);
+                TextView viewCount = holder.itemView.findViewById(R.id.viewCount);
                 TextView timeText = holder.itemView.findViewById(R.id.timeText);
                 TextView cvidText = holder.itemView.findViewById(R.id.cvidText);
                 cvidText.setText("cv" + article.id/* + " | " + article.wordCount + "字"*/);
                 StringUtil.setCopy(cvidText, "cv" + article.id);
-                views.setText(StringUtil.toWan(article.stats.view) + "阅读");
+                viewCount.setText(StringUtil.toWan(article.stats.view) + "阅读");
                 timeText.setText(article.pubTime);
 
                 if (article.type == Opus.TYPE_DYNAMIC){
-                    holder.itemView.findViewById(R.id.viewsIcon).setVisibility(View.GONE);
-                    holder.itemView.findViewById(R.id.viewsCount).setVisibility(View.GONE);
+                    holder.itemView.findViewById(R.id.viewIcon).setVisibility(View.GONE);
+                    viewCount.setVisibility(View.GONE);
+                    holder.itemView.findViewById(R.id.cvidIcon).setVisibility(View.GONE);
+                    cvidText.setVisibility(View.GONE);
                 }
                 break;
             case OpusParagraph.TYPE_TEXT:

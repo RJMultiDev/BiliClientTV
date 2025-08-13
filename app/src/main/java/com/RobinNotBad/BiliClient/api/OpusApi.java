@@ -1,13 +1,10 @@
 package com.RobinNotBad.BiliClient.api;
 
-import android.util.Log;
-
 import com.RobinNotBad.BiliClient.model.Opus;
 import com.RobinNotBad.BiliClient.model.OpusParagraph;
 import com.RobinNotBad.BiliClient.model.Stats;
 import com.RobinNotBad.BiliClient.model.UserInfo;
 import com.RobinNotBad.BiliClient.util.JsonUtil;
-import com.RobinNotBad.BiliClient.util.Logu;
 import com.RobinNotBad.BiliClient.util.NetWorkUtil;
 
 import org.json.JSONArray;
@@ -39,8 +36,9 @@ public class OpusApi {
 
             JSONObject detail = new JSONObject(JsonUtil.search(html, "detail", ""));  //效率不高 能用就行 死去的jsonUtil居然还能发光发热
 
-            opus.commentId = Integer.parseInt(detail.optString("comment_id_str", "0"));
-            opus.commentType = detail.optInt("comment_type");
+            JSONObject basic = detail.getJSONObject("basic");
+            opus.commentId = Integer.parseInt(basic.optString("comment_id_str", "0"));
+            opus.commentType = basic.optInt("comment_type");
 
             if(detail.isNull("modules")) return opus;    //isNull其实涵盖了!has的情况，之前都是咋想的判断两次，我简直是sb
             JSONArray modules = detail.getJSONArray("modules");
@@ -49,8 +47,7 @@ public class OpusApi {
                 JSONObject module = modules.getJSONObject(i);
                 switch (module.optString("module_type")) {
                     case "MODULE_TYPE_TITLE":
-                        String title = module.getJSONObject("module_title").getString("text");
-                        Logu.d(title);
+                        opus.title = module.getJSONObject("module_title").getString("text");
                         break;
                     case "MODULE_TYPE_AUTHOR":
                         JSONObject module_author = module.getJSONObject("module_author");    //我感觉b站也是一个巨大的草台班子，用户信息格式都好几种，头像有avatar有face有head的，他们自己的程序员不累吗……
@@ -69,10 +66,14 @@ public class OpusApi {
                         JSONArray paragraphs = module.getJSONObject("module_content").getJSONArray("paragraphs");
                         opus.paragraphs = analyzeParagraphs(paragraphs);
                         break;
-
+                    case "MODULE_TYPE_STAT":
+                        opus.stats = Stats.fromOpus(module.optJSONObject("module_stat"));
+                        break;
                 }
             }
-            opus.stats = new Stats();
+
+            if(opus.upInfo == null) opus.upInfo = new UserInfo();
+            if(opus.stats == null) opus.stats = new Stats();
         } catch (IllegalArgumentException e){ // 取不出来的时候，会重定向，但重定向的域名是//开头的，会报错
             url = "https://api.bilibili.com/x/polymer/web-dynamic/v1/detail??";
             url += "timezone_offset=-480&platform=web&gaia_source=main_web&id=" + id + "&features=itemOpusStyle,opusBigCover,onlyfansVote,endFooterHidden,decorationCard,onlyfansAssetsV2,ugcDelete,onlyfansQaCard,editable,opusPrivateVisible,avatarAutoTheme&web_location=333.1368&x-bili-device-req-json=%7B%22platform%22:%22web%22,%22device%22:%22pc%22%7D&x-bili-web-req-json=%7B%22spm_id%22:%22333.1368%22%7D";
@@ -81,7 +82,6 @@ public class OpusApi {
             if(responseBody == null) return opus;
 
             JSONObject json = new JSONObject(responseBody.string());
-            if (json == null) return opus;
 
             JSONObject item = json.getJSONObject("data").getJSONObject("item");
 
@@ -125,7 +125,7 @@ public class OpusApi {
                     JSONArray opus_pics = dynamic_opus.getJSONArray("pics");
 
                     // 为了排版正常，这里必须把列表完整传递给OpusParagraph，让OpusParagraph那边解析
-                    // 这么干主要是为了适配这神秘的代码结构，我研究OpusParagraph的使用方法旧研究了半天
+                    // 这么干主要是为了适配这神秘的代码结构，我研究OpusParagraph的使用方法就研究了半天
                     // by Moye
 
                     JSONObject object = new JSONObject();

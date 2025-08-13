@@ -22,6 +22,7 @@ public enum ContentType {
     Manga_1(20),
     Manga_2(21),
     Manga_3(22),
+    Opus(23),
     Course(33),
     ;
 

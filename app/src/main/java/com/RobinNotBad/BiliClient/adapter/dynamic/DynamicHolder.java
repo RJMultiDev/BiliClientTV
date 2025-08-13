@@ -52,6 +52,7 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
     public static final int GO_TO_INFO_REQUEST = 71;
     public final TextView username;
     public final TextView content;
+    public final TextView title;
     public TextView pubdate;
     public final ImageView avatar;
     public final LinearLayout extraCard;
@@ -75,6 +76,7 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
             username = itemView.findViewById(R.id.child_username);
             content = itemView.findViewById(R.id.child_content);
             avatar = itemView.findViewById(R.id.child_avatar);
+            title = itemView.findViewById(R.id.child_title);
             extraCard = itemView.findViewById(R.id.child_extraCard);
             this.cell_dynamic_video = extraCard.findViewById(R.id.dynamic_video_child);
             this.cell_dynamic_article = extraCard.findViewById(R.id.dynamic_article_child);
@@ -84,6 +86,7 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
             pubdate = itemView.findViewById(R.id.pubdate);
             content = itemView.findViewById(R.id.content);
             avatar = itemView.findViewById(R.id.avatar);
+            title = itemView.findViewById(R.id.title);
             extraCard = itemView.findViewById(R.id.extraCard);
             item_dynamic_share = itemView.findViewById(R.id.item_dynamic_share);
             likeCount = itemView.findViewById(R.id.likes);
@@ -198,7 +201,12 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
 
     @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
     public void showDynamic(Context context, Dynamic dynamic, boolean clickable) {    //公用的显示函数 这样修改和调用都方便
-        StringUtil.setCopy(content);
+        if(!TextUtils.isEmpty(dynamic.title)) {
+            title.setVisibility(View.VISIBLE);
+            title.setText(dynamic.title);
+        }
+        else title.setVisibility(View.GONE);
+
         username.setText(dynamic.userInfo.name);
         if (!dynamic.userInfo.vip_nickname_color.isEmpty()) {
             username.setTextColor(Color.parseColor(dynamic.userInfo.vip_nickname_color));
@@ -297,6 +305,11 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
                 }
                 break;
         }
+
+        if(dynamic.major_object == null && dynamic.dynamic_forward == null)
+            extraCard.setVisibility(View.GONE);  //这部分在adapter里
+        else
+            extraCard.setVisibility(View.VISIBLE);
 
         if (clickable) {
             content.setMaxLines(5);

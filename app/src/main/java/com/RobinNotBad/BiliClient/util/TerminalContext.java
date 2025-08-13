@@ -16,6 +16,7 @@ import com.RobinNotBad.BiliClient.activity.video.info.VideoInfoActivity;
 import com.RobinNotBad.BiliClient.api.ArticleApi;
 import com.RobinNotBad.BiliClient.api.DynamicApi;
 import com.RobinNotBad.BiliClient.api.LiveApi;
+import com.RobinNotBad.BiliClient.api.OpusApi;
 import com.RobinNotBad.BiliClient.api.ReplyApi;
 import com.RobinNotBad.BiliClient.api.UserInfoApi;
 import com.RobinNotBad.BiliClient.api.VideoInfoApi;
@@ -25,6 +26,7 @@ import com.RobinNotBad.BiliClient.model.Dynamic;
 import com.RobinNotBad.BiliClient.model.LiveInfo;
 import com.RobinNotBad.BiliClient.model.LivePlayInfo;
 import com.RobinNotBad.BiliClient.model.LiveRoom;
+import com.RobinNotBad.BiliClient.model.Opus;
 import com.RobinNotBad.BiliClient.model.Reply;
 import com.RobinNotBad.BiliClient.model.UserInfo;
 import com.RobinNotBad.BiliClient.model.VideoInfo;
@@ -201,6 +203,18 @@ public class TerminalContext {
         activity.startActivityForResult(intent, requestId);
     }
 
+    private Result<Opus> fetchOpus(long id, boolean saveToCache) {
+        try {
+            Opus opus = OpusApi.getOpus(id);
+            if (saveToCache) {
+                contentLruCache.put(ContentType.Opus.getTypeCode() + "_" + id, opus);
+            }
+            return Result.success(opus);
+        } catch (Exception t) {
+            return Result.failure(t);
+        }
+    }
+
     private Result<Dynamic> fetchDynamic(long id, boolean saveToCache) {
         try {
             Dynamic dynamic = DynamicApi.getDynamic(id);
@@ -297,6 +311,16 @@ public class TerminalContext {
             return CenterThreadPool.supplyAsyncWithLiveData(() -> fetchDynamic(id, true).getOrThrow());
         } else {
             return new MutableLiveData<>(Result.success((Dynamic) obj));
+        }
+    }
+
+    public LiveData<Result<Opus>> getOpusById(long id) {
+        String key = ContentType.Dynamic.getTypeCode() + "_" + id;
+        Object obj = contentLruCache.get(key);
+        if (!(obj instanceof Opus)) {
+            return CenterThreadPool.supplyAsyncWithLiveData(() -> fetchOpus(id, true).getOrThrow());
+        } else {
+            return new MutableLiveData<>(Result.success((Opus) obj));
         }
     }
 

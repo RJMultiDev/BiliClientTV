@@ -456,20 +456,25 @@ public class DynamicApi {
 
                     case "MAJOR_TYPE_OPUS":
                         JSONObject opusJson = major.getJSONObject("opus");
-                        dynamic.title = opusJson.optString("title");
+
+                        String title = opusJson.optString("title");
+                        if(!TextUtils.isEmpty(title) && !"null".equals(title))
+                            dynamic.title = title;
+
                         JSONArray pics = opusJson.optJSONArray("pics");
                         if(pics != null){
                             ArrayList<String> opusPicList = new ArrayList<>();
-                            for (int i = 0; i < pics.length(); i++) {
+                            for (int i = 0; i < pics.length(); i++)
                                 opusPicList.add(pics.getJSONObject(i).optString("url"));
-                            }
+
                             dynamic.major_object = opusPicList;
                         }
 
                         JSONObject summary = opusJson.optJSONObject("summary");
                         if(summary != null)
                             dynamic.content = analyzeTextContent(summary.optJSONArray("rich_text_nodes"));
-                        else dynamic.content = "";
+                        else
+                            dynamic.content = "";
 
                         break;
 
@@ -483,7 +488,8 @@ public class DynamicApi {
                 if (module_additional.getString("type").equals("ADDITIONAL_TYPE_UGC")) {
                     dynamic.major_type = "MAJOR_TYPE_ARCHIVE";
                     dynamic.major_object = analyzeVideoCard(module_additional.getJSONObject("ugc"));
-                } else Logu.v("addi", module_additional.getString("type"));
+                }
+                else Logu.v("addi", module_additional.getString("type"));
             }
         }
 
