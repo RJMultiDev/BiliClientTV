@@ -70,12 +70,6 @@ public class SplashActivity extends Activity {
         }, 100, 100);
 
         CenterThreadPool.run(() -> {
-            // 讲真这免责声明没啥卵用，写这个也就是半开玩笑的，难道免责声明能挡住律师函吗
-            // 而且"fuck_uncle"过分了嗷，咱做第三方软件的真不能这么干……
-            if (!SharedPreferencesUtil.getBoolean("disclaimer_shown", false)) {
-                MsgUtil.showDialog("免责声明", "使用前请先阅读：\n" + getResources().getString(R.string.about_to_uncle), 3);
-                SharedPreferencesUtil.putBoolean("disclaimer_shown", true);
-            }
 
             //FileUtil.clearCache(this);  //先清个缓存（为了防止占用过大）
             //不需要了，我把大部分图片的硬盘缓存都关闭了，只有表情包保留，这样既可以缩减缓存占用又能在一定程度上减少流量消耗

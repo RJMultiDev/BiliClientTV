@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.Pair;
 
 import com.RobinNotBad.BiliClient.BiliTerminal;
 import com.RobinNotBad.BiliClient.BuildConfig;
@@ -34,6 +33,13 @@ import java.util.Objects;
 
 public class AppInfoApi {
     public static void check(Context context) {
+        // 讲真这免责声明没啥卵用，写这个也就是半开玩笑的，难道免责声明能挡住律师函吗
+        // 而且"fuck_uncle"过分了嗷，咱做第三方软件的真不能这么干……
+        if (!SharedPreferencesUtil.getBoolean("disclaimer_shown", false)) {
+            MsgUtil.showDialog("免责声明", "使用前请先阅读：\n" + context.getString(R.string.about_to_uncle), 3);
+            SharedPreferencesUtil.putBoolean("disclaimer_shown", true);
+        }
+
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         if(hour >= 23 || hour <= 3){
