@@ -814,7 +814,7 @@
                         android:gravity="center"
                         android:textSize="11sp"
                         android:layout_marginVertical="2dp"
-                        android:text="@string/fuck_uncle"
+                        android:text="@string/about_to_uncle"
                         android:layout_gravity="center" />
 
                 </LinearLayout>

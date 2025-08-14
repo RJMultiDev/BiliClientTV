@@ -11,8 +11,6 @@ import com.RobinNotBad.BiliClient.api.RecommendApi;
 import com.RobinNotBad.BiliClient.helper.TutorialHelper;
 import com.RobinNotBad.BiliClient.model.VideoCard;
 import com.RobinNotBad.BiliClient.util.CenterThreadPool;
-import com.RobinNotBad.BiliClient.util.MsgUtil;
-import com.RobinNotBad.BiliClient.util.SharedPreferencesUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,11 +39,6 @@ public class RecommendActivity extends RefreshMainActivity {
         recyclerView.setHasFixedSize(true);
 
         TutorialHelper.showTutorialList(this, R.array.tutorial_recommend, 0);
-
-        if (!SharedPreferencesUtil.getBoolean("show_disclaimer", false)) {
-            MsgUtil.showText("免责声明", "使用前请先悉知：\n" + getResources().getString(R.string.fuck_uncle));
-            SharedPreferencesUtil.putBoolean("show_disclaimer", true);
-        }
 
         refreshRecommend();
     }
