@@ -276,6 +276,7 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
                 break;
 
             case "MAJOR_TYPE_DRAW":
+            case "MAJOR_TYPE_OPUS":
                 ArrayList<String> pictureList;
                 if (dynamic.major_object instanceof ArrayList) {
                     pictureList = (ArrayList<String>) dynamic.major_object;
