@@ -220,6 +220,7 @@
 
     #新增功能放到上面，修复问题放下面，方便用户看见
     <string-array name="update_log_items">
+        <item>这个fix版本在以下基础上修复了部分动态解析错误和图片无法点击的问题</item>
         <item>更换了动态API，修复了API弃用导致的动态显示异常问题</item>
         <item>增加了一键三连功能</item>
         <item>增加了首次使用时免责声明突脸</item>

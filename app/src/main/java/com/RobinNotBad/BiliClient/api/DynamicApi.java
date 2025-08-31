@@ -338,15 +338,25 @@ public class DynamicApi {
         Logu.v("--------------");
         Dynamic dynamic = new Dynamic();
 
-        dynamic.dynamicId = Long.parseLong(dynamic_json.optString("id_str","0"));
-        Logu.v("id", String.valueOf(dynamic.dynamicId));
-        dynamic.type = dynamic_json.getString("type");
-        Logu.v("type", dynamic.type);
+        if(!dynamic_json.isNull("id_str"))
+            dynamic.dynamicId = Long.parseLong(dynamic_json.optString("id_str","0"));
+        else {
+            dynamic.dynamicId = 0;
+        }
+        dynamic.type = dynamic_json.optString("type");
 
         JSONObject basic = dynamic_json.getJSONObject("basic");
-        String comment_id_str = basic.optString("comment_id_str");
-        if (!comment_id_str.isEmpty()) dynamic.comment_id = Long.parseLong(comment_id_str);
+        if(!basic.isNull("comment_id_str"))
+            dynamic.comment_id = Long.parseLong(basic.optString("comment_id_str", "0"));
+        else {
+            dynamic.comment_id = 0;
+        }
         dynamic.comment_type = basic.optInt("comment_type");
+
+        Logu.v("id", String.valueOf(dynamic.dynamicId));
+        Logu.v("oid", String.valueOf(dynamic.comment_id));
+        Logu.v("type", dynamic.type);
+        Logu.v("otype", String.valueOf(dynamic.comment_type));
 
         JSONObject modules = dynamic_json.getJSONObject("modules");
 

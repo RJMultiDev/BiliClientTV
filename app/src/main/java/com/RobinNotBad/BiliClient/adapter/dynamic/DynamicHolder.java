@@ -41,7 +41,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.material.card.MaterialCardView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,10 +58,10 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
     public final View itemView;
     public TextView item_dynamic_share, item_dynamic_delete;
     public TextView likeCount;
-    public MaterialCardView cell_dynamic_child;
-    public final MaterialCardView cell_dynamic_video;
-    public final MaterialCardView cell_dynamic_image;
-    public final MaterialCardView cell_dynamic_article;
+    public View cell_dynamic_child;
+    public final View cell_dynamic_video;
+    public final View cell_dynamic_image;
+    public final View cell_dynamic_article;
     public final boolean isChild;
     final BaseActivity mActivity;
     public ActivityResultLauncher<Intent> relayDynamicLauncher;
@@ -283,9 +282,9 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
                 } else {
                     pictureList = new ArrayList<>();
                 }
-                View imageCard = cell_dynamic_image;
-                ImageView imageView = imageCard.findViewById(R.id.imageView);
+
                 if(!pictureList.isEmpty()) {
+                    ImageView imageView = cell_dynamic_image.findViewById(R.id.imageView);
                     Glide.with(BiliTerminal.context).asDrawable().load(GlideUtil.url(pictureList.get(0)))
                             .transition(GlideUtil.getTransitionOptions())
                             .placeholder(R.mipmap.placeholder)
@@ -294,9 +293,9 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
                             .sizeMultiplier(0.85f)
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .into(imageView);
-                    TextView textView = imageCard.findViewById(R.id.imageCount);
+                    TextView textView = cell_dynamic_image.findViewById(R.id.imageCount);
                     textView.setText("共" + pictureList.size() + "张图片");
-                    cell_dynamic_image.setOnClickListener(view -> {
+                    imageView.setOnClickListener(view -> {
                         Intent intent = new Intent();
                         intent.setClass(context, ImageViewerActivity.class);
                         intent.putExtra("imageList", pictureList);
