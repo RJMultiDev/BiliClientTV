@@ -339,18 +339,23 @@ public class DynamicApi {
         Dynamic dynamic = new Dynamic();
 
         if(!dynamic_json.isNull("id_str"))
-            dynamic.dynamicId = Long.parseLong(dynamic_json.optString("id_str","0"));
+            try {
+                dynamic.dynamicId = Long.parseLong(dynamic_json.optString("id_str","0"));
+            } catch (Exception ignored){}
         else {
             dynamic.dynamicId = 0;
         }
         dynamic.type = dynamic_json.optString("type");
 
         JSONObject basic = dynamic_json.getJSONObject("basic");
-        if(!basic.isNull("comment_id_str"))
-            dynamic.comment_id = Long.parseLong(basic.optString("comment_id_str", "0"));
-        else {
+        String comment_id = basic.optString("comment_id_str", "0");
+        if(!TextUtils.isEmpty(comment_id))
+            try {
+                dynamic.comment_id = Long.parseLong(comment_id);
+            } catch (Exception ignored){}
+        else
             dynamic.comment_id = 0;
-        }
+
         dynamic.comment_type = basic.optInt("comment_type");
 
         Logu.v("id", String.valueOf(dynamic.dynamicId));
