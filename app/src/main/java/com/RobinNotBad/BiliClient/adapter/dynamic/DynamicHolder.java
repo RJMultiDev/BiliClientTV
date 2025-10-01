@@ -329,7 +329,6 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
                         targetView.performClick();
                     }
                 });
-
             }
         } else {
             content.setMaxLines(999);
@@ -346,7 +345,7 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
             TerminalContext.getInstance().setForwardContent(dynamic);
             relayDynamicLauncher.launch(intent);
         };
-        if (item_dynamic_share != null) item_dynamic_share.setOnClickListener(onRelayClick);
+        if (item_dynamic_share != null && clickable) item_dynamic_share.setOnClickListener(onRelayClick);
 
         View.OnClickListener onDeleteClick = view -> MsgUtil.showMsg("长按删除");
         if (item_dynamic_delete != null) {

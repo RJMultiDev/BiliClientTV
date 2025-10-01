@@ -220,15 +220,8 @@
 
     #新增功能放到上面，修复问题放下面，方便用户看见
     <string-array name="update_log_items">
-        <item>这个fix版本在以下基础上修复了部分动态解析错误和图片无法点击的问题</item>
-        <item>更换了动态API，修复了API弃用导致的动态显示异常问题</item>
-        <item>增加了一键三连功能</item>
-        <item>增加了首次使用时免责声明突脸</item>
-        <item>修复了开屏画面卡死问题（禁用了IPV6）</item>
-        <item>修复了首次播放视频为1080P的问题</item>
-        <item>修复了未投稿过视频时创作中心报错的问题</item>
-        <item>修复了直播弹幕连接失败的问题</item>
-        <item>偷偷把视频加载图换成了抖动小电视</item>
+        <item>修复了动态、专栏显示错误的问题</item>
+        <item>此fix版本还修复了动态转发崩溃的问题</item>
         <item>优化了少量屎山代码</item>
         <item>新增了一些bug和屎山代码</item>
     </string-array>
