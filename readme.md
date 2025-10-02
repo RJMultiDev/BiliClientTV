@@ -1,12 +1,10 @@
 <div align="center">
 
-# 哔哩终端
+# 哔哩终端TV
 
-轻量的第三方B站Android客户端
-[安装包下载点这里](https://gitee.com/RobinNotBad/BiliClient/releases)
+轻量的第三方B站Android客户端分支
 
-[官方 Gitee 仓库](https://gitee.com/RobinNotBad/BiliClient) | [Github 仓库 (由huanli233 fork)](https://github.com/huanli233/BiliClient) | [Action Build (Github)](https://github.com/huanli233/action_build_biliclient/actions)
-
+由 RJ 为您推出
 
 </div>
 
