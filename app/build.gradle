@@ -2,7 +2,7 @@ plugins {
     id 'com.android.application'
 }
 
-int betaVer = 0 //如果为0则是正式版
+int betaVer = 1 //如果为0则是正式版
 
 android {
 
@@ -21,7 +21,7 @@ android {
         minSdk 14
         //noinspection ExpiredTargetSdkVersion
         targetSdk 26
-        versionCode 20251002
+        versionCode 20251003
         versionName "TV 25w05a"
 
         if (betaVer) {
