@@ -243,7 +243,7 @@ public class ArticleContentAdapter extends RecyclerView.Adapter<ArticleContentAd
                 break;
 
             case -2:
-                TextView views = holder.itemView.findViewById(R.id.viewsCount);
+                TextView views = holder.itemView.findViewById(R.id.viewCount);
                 TextView timeText = holder.itemView.findViewById(R.id.timeText);
                 TextView cvidText = holder.itemView.findViewById(R.id.cvidText);
                 cvidText.setText("cv" + articleInfo.id + " | " + articleInfo.wordCount + "字");

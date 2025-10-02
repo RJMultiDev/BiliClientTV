@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,29 +16,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.RobinNotBad.BiliClient.R;
-import com.RobinNotBad.BiliClient.adapter.article.ArticleContentAdapter;
 import com.RobinNotBad.BiliClient.adapter.article.OpusContentAdapter;
-import com.RobinNotBad.BiliClient.api.ArticleApi;
-import com.RobinNotBad.BiliClient.api.OpusApi;
-import com.RobinNotBad.BiliClient.model.ArticleInfo;
-import com.RobinNotBad.BiliClient.model.ArticleLine;
 import com.RobinNotBad.BiliClient.model.Opus;
 import com.RobinNotBad.BiliClient.ui.widget.recycler.CustomLinearManager;
-import com.RobinNotBad.BiliClient.util.CenterThreadPool;
-import com.RobinNotBad.BiliClient.util.JsonUtil;
 import com.RobinNotBad.BiliClient.util.MsgUtil;
-import com.RobinNotBad.BiliClient.util.Result;
 import com.RobinNotBad.BiliClient.util.SharedPreferencesUtil;
 import com.RobinNotBad.BiliClient.util.TerminalContext;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-
-import java.io.IOException;
-import java.util.ArrayList;
 
 public class OpusInfoFragment extends Fragment {
     long oid;
@@ -93,19 +75,15 @@ public class OpusInfoFragment extends Fragment {
             recyclerView.setPadding(paddings,0,paddings,0);
         }
 
-        CenterThreadPool.run(()->{
-            try {
-                opus = OpusApi.getOpus(oid);
-                if(!isAdded()) return;
-                OpusContentAdapter adapter = new OpusContentAdapter(requireActivity(), opus);
-                requireActivity().runOnUiThread(()->{
-                    recyclerView.setLayoutManager(new CustomLinearManager(requireContext()));
-                    recyclerView.setAdapter(adapter);
-                });
-            } catch (Exception e) {
-                MsgUtil.err(e);
-            }
-        });
+        TerminalContext.getInstance().getOpusById(oid)
+                .observe(getViewLifecycleOwner(), (result) -> result.onSuccess((opus)-> {
+                    if(!isAdded()) return;
+                    OpusContentAdapter adapter = new OpusContentAdapter(requireActivity(), opus);
+                    requireActivity().runOnUiThread(()->{
+                        recyclerView.setLayoutManager(new CustomLinearManager(requireContext()));
+                        recyclerView.setAdapter(adapter);
+                    });
+                }).onFailure(MsgUtil::err));
 
     }
 }

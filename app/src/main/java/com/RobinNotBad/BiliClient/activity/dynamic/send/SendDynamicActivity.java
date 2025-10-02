@@ -3,43 +3,26 @@ package com.RobinNotBad.BiliClient.activity.dynamic.send;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.FrameLayout;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.RobinNotBad.BiliClient.R;
 import com.RobinNotBad.BiliClient.activity.EmoteActivity;
-import com.RobinNotBad.BiliClient.activity.ImageViewerActivity;
 import com.RobinNotBad.BiliClient.activity.base.BaseActivity;
-import com.RobinNotBad.BiliClient.activity.user.info.UserInfoActivity;
-import com.RobinNotBad.BiliClient.adapter.article.ArticleCardHolder;
+import com.RobinNotBad.BiliClient.adapter.dynamic.DynamicHolder;
 import com.RobinNotBad.BiliClient.adapter.video.VideoCardHolder;
 import com.RobinNotBad.BiliClient.api.EmoteApi;
-import com.RobinNotBad.BiliClient.model.ArticleCard;
 import com.RobinNotBad.BiliClient.model.Dynamic;
-import com.RobinNotBad.BiliClient.model.VideoCard;
 import com.RobinNotBad.BiliClient.model.VideoInfo;
-import com.RobinNotBad.BiliClient.util.GlideUtil;
 import com.RobinNotBad.BiliClient.util.MsgUtil;
 import com.RobinNotBad.BiliClient.util.SharedPreferencesUtil;
-import com.RobinNotBad.BiliClient.util.StringUtil;
 import com.RobinNotBad.BiliClient.util.TerminalContext;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DecodeFormat;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.card.MaterialCardView;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * 发送动态输入Activity，直接copy的WriteReplyActivity
@@ -74,7 +57,7 @@ public class SendDynamicActivity extends BaseActivity {
             editText = findViewById(R.id.editText);
             MaterialCardView send = findViewById(R.id.send);
 
-            ConstraintLayout extraCard = findViewById(R.id.extraCard);
+            FrameLayout extraCard = findViewById(R.id.forwardCard);
             VideoInfo video = null;
             Dynamic forward = null;
             if(TerminalContext.getInstance().getForwardContent() instanceof VideoInfo) {
@@ -83,8 +66,9 @@ public class SendDynamicActivity extends BaseActivity {
                 forward = (Dynamic) TerminalContext.getInstance().getForwardContent();
             }
             if (forward != null) {
-                View childCard = View.inflate(this, R.layout.cell_dynamic_child, extraCard);
-                showChildDyn(childCard, forward);
+                View childCard = View.inflate(this, R.layout.cell_dynamic, extraCard);
+                DynamicHolder holder = new DynamicHolder(childCard, this, false);
+                holder.showDynamic(this, forward, false);
             } else if (video != null) {
                 VideoCardHolder holder = new VideoCardHolder(LayoutInflater.from(this).inflate(R.layout.cell_video_list, extraCard));
                 holder.showVideoCard(video.toCard(),this);
@@ -110,92 +94,6 @@ public class SendDynamicActivity extends BaseActivity {
         });
     }
 
-    @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
-    private void showChildDyn(View itemView, Dynamic dynamic) {
-        TextView username, content;
-        ImageView avatar;
-        LinearLayout extraCard;
-        MaterialCardView cell_dynamic_video, cell_dynamic_image, cell_dynamic_article;
-        username = itemView.findViewById(R.id.child_username);
-        content = itemView.findViewById(R.id.child_content);
-        avatar = itemView.findViewById(R.id.child_avatar);
-        extraCard = itemView.findViewById(R.id.child_extraCard);
-        cell_dynamic_video = extraCard.findViewById(R.id.dynamic_video_child);
-        cell_dynamic_article = extraCard.findViewById(R.id.dynamic_article_child);
-        cell_dynamic_image = extraCard.findViewById(R.id.dynamic_image_child);
-
-        username.setText(dynamic.userInfo.name);
-        if (dynamic.content != null && !TextUtils.isEmpty(dynamic.content)) {
-            content.setVisibility(View.VISIBLE);
-            content.setText(dynamic.content);
-            StringUtil.setCopy(content);
-            content.setOnTouchListener(new StringUtil.ClickableSpanTouchListener());
-        } else content.setVisibility(View.GONE);
-
-        Glide.with(this).load(GlideUtil.url(dynamic.userInfo.avatar))
-                .transition(GlideUtil.getTransitionOptions())
-                .placeholder(R.mipmap.akari)
-                .apply(RequestOptions.circleCropTransform())
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .into(avatar);
-
-        avatar.setOnClickListener(view -> {
-            Intent intent = new Intent();
-            intent.setClass(this, UserInfoActivity.class);
-            intent.putExtra("mid", dynamic.userInfo.mid);
-            this.startActivity(intent);
-        });
-
-        boolean isPgc = false;
-        for (View view1 : Arrays.asList(cell_dynamic_video, cell_dynamic_image, cell_dynamic_article)) {
-            if (view1 != null) {
-                view1.setVisibility(View.GONE);
-            }
-        }
-        if (dynamic.major_type != null) switch (dynamic.major_type) {
-            case "MAJOR_TYPE_PGC":
-                isPgc = true;
-            case "MAJOR_TYPE_ARCHIVE":
-            case "MAJOR_TYPE_UGC_SEASON":
-                VideoCard childVideoCard = (VideoCard) dynamic.major_object;
-                VideoCardHolder video_holder = new VideoCardHolder(cell_dynamic_video);
-                video_holder.showVideoCard(childVideoCard, this);
-                boolean finalIsPgc = isPgc;
-                cell_dynamic_video.setOnClickListener(view -> TerminalContext.getInstance().enterVideoDetailPage(this, childVideoCard.aid, "", finalIsPgc ? "media": null));
-                cell_dynamic_video.setVisibility(View.VISIBLE);
-                break;
-
-            case "MAJOR_TYPE_ARTICLE":
-                ArticleCard articleCard = (ArticleCard) dynamic.major_object;
-                ArticleCardHolder article_holder = new ArticleCardHolder(cell_dynamic_article);
-                article_holder.showArticleCard(articleCard, this);
-                cell_dynamic_article.setOnClickListener(view -> TerminalContext.getInstance().enterArticleDetailPage(this, articleCard.id));
-                cell_dynamic_article.setVisibility(View.VISIBLE);
-                break;
-
-            case "MAJOR_TYPE_DRAW":
-                ArrayList<String> pictureList = (ArrayList<String>) dynamic.major_object;
-                ImageView imageView = cell_dynamic_image.findViewById(R.id.imageView);
-                Glide.with(this).asDrawable().load(GlideUtil.url(pictureList.get(0)))
-                        .transition(GlideUtil.getTransitionOptions())
-                        .placeholder(R.mipmap.placeholder)
-                        .format(DecodeFormat.PREFER_RGB_565)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .into(imageView);
-                TextView textView = cell_dynamic_image.findViewById(R.id.imageCount);
-                textView.setText("共" + pictureList.size() + "张图片");
-                cell_dynamic_image.setOnClickListener(view -> {
-                    Intent intent = new Intent();
-                    intent.setClass(this, ImageViewerActivity.class);
-                    intent.putExtra("imageList", pictureList);
-                    startActivity(intent);
-                });
-                cell_dynamic_image.setVisibility(View.VISIBLE);
-                break;
-        }
-        content.setMaxLines(999);
-        content.setEllipsize(TextUtils.TruncateAt.END);
-    }
 
     @Override
     protected void onDestroy() {

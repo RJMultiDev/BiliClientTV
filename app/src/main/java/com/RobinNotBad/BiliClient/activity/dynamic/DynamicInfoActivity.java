@@ -17,7 +17,9 @@ import com.RobinNotBad.BiliClient.adapter.viewpager.ViewPagerFragmentAdapter;
 import com.RobinNotBad.BiliClient.api.ReplyApi;
 import com.RobinNotBad.BiliClient.event.ReplyEvent;
 import com.RobinNotBad.BiliClient.helper.TutorialHelper;
-import com.RobinNotBad.BiliClient.util.*;
+import com.RobinNotBad.BiliClient.util.AnimationUtils;
+import com.RobinNotBad.BiliClient.util.MsgUtil;
+import com.RobinNotBad.BiliClient.util.TerminalContext;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -38,7 +40,7 @@ public class DynamicInfoActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_simple_viewpager);
-        this.seek_reply = getIntent().getLongExtra("seekReply", -1);
+        seek_reply = getIntent().getLongExtra("seekReply", -1);
 
         Intent intent = getIntent();
         long id = intent.getLongExtra("id", 0);

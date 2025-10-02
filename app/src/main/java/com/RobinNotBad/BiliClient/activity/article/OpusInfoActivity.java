@@ -10,10 +10,15 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.RobinNotBad.BiliClient.R;
 import com.RobinNotBad.BiliClient.activity.base.BaseActivity;
+import com.RobinNotBad.BiliClient.activity.dynamic.DynamicInfoActivity;
 import com.RobinNotBad.BiliClient.activity.reply.ReplyFragment;
 import com.RobinNotBad.BiliClient.adapter.viewpager.ViewPagerFragmentAdapter;
 import com.RobinNotBad.BiliClient.event.ReplyEvent;
+import com.RobinNotBad.BiliClient.helper.TutorialHelper;
+import com.RobinNotBad.BiliClient.model.Opus;
 import com.RobinNotBad.BiliClient.util.AnimationUtils;
+import com.RobinNotBad.BiliClient.util.MsgUtil;
+import com.RobinNotBad.BiliClient.util.TerminalContext;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -36,7 +41,7 @@ public class OpusInfoActivity extends BaseActivity {
         setContentView(R.layout.activity_simple_viewpager);
         Intent intent = getIntent();
         oid = intent.getLongExtra("id", 114514);
-        this.seek_reply = getIntent().getLongExtra("seekReply", -1);
+        seek_reply = getIntent().getLongExtra("seekReply", -1);
 
         setPageName("文章详情");
         loadingView = findViewById(R.id.loading);
@@ -45,36 +50,40 @@ public class OpusInfoActivity extends BaseActivity {
 
         ViewPager viewPager = findViewById(R.id.viewPager);
 
-        List<Fragment> fragmentList = new ArrayList<>();
-        OpusInfoFragment oiFragment = OpusInfoFragment.newInstance(oid);
-        fragmentList.add(oiFragment);
-        ViewPagerFragmentAdapter vpfAdapter = new ViewPagerFragmentAdapter(getSupportFragmentManager(), fragmentList);
-        viewPager.setAdapter(vpfAdapter);
 
-        AnimationUtils.crossFade(loadingView, oiFragment.getView());
-        /*
-        TerminalContext.getInstance().getArticleInfoByCvId(cvid)
-            .observe(this, (result) -> result.onSuccess((articleInfo)-> {
+
+        TerminalContext.getInstance().getOpusById(oid)
+            .observe(this, (result) -> result.onSuccess((opus)-> {
+                if(opus.type == Opus.TYPE_DYNAMIC_OLD_STYLE){
+                    Intent intent1 = new Intent(this, DynamicInfoActivity.class);
+                    intent1.putExtra("id", oid);
+                    intent1.putExtra("seekReply", seek_reply);
+                    startActivity(intent1);
+                    finish();
+                    return;
+                }
+
                 List<Fragment> fragmentList = new ArrayList<>();
-                ArticleInfoFragment articleInfoFragment = ArticleInfoFragment.newInstance(cvid);
-                fragmentList.add(articleInfoFragment);
-                replyFragment = ReplyFragment.newInstance(cvid, ReplyApi.REPLY_TYPE_ARTICLE, articleInfo.stats.reply, seek_reply, articleInfo.upInfo.mid);
-                replyFragment.setManager(articleInfo.upInfo);
+
+                OpusInfoFragment oiFragment = OpusInfoFragment.newInstance(oid);
+                fragmentList.add(oiFragment);
+
+                replyFragment = ReplyFragment.newInstance(opus.commentId, opus.commentType, opus.stats.reply, seek_reply, opus.upInfo.mid);
+                replyFragment.setManager(opus.upInfo);
                 fragmentList.add(replyFragment);
+
                 ViewPagerFragmentAdapter vpfAdapter = new ViewPagerFragmentAdapter(getSupportFragmentManager(), fragmentList);
                 viewPager.setAdapter(vpfAdapter);
-                View view;
-                if ((view = articleInfoFragment.getView()) != null)
-                    view.setVisibility(View.GONE);
                 if (seek_reply != -1) viewPager.setCurrentItem(1);
-                articleInfoFragment.setOnFinishLoad(() -> AnimationUtils.crossFade(loadingView, articleInfoFragment.getView()));
+
+                AnimationUtils.crossFade(loadingView, oiFragment.getView());
                 TutorialHelper.showPagerTutorial(this,2);
             }).onFailure((error) -> {
                 loadingView.setImageResource(R.mipmap.loading_2233_error);
                 MsgUtil.err(error);
             }));
 
-         */
+
     }
 
     @Override

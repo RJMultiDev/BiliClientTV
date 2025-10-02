@@ -44,16 +44,30 @@
         app:layout_constraintTop_toBottomOf="@id/username" />
 
     <TextView
-        android:id="@+id/content"
+        android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
+        android:ellipsize="end"
         android:text="只因你太美！"
         android:textSize="13sp"
-        android:ellipsize="end"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/avatar"
+        tools:ignore="TouchTargetSizeCheck" />
+
+    <TextView
+        android:id="@+id/content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:ellipsize="end"
+        android:text="第一次压扁成这样的我~"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
         tools:ignore="TouchTargetSizeCheck" />
 
     <LinearLayout
@@ -61,37 +75,38 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
+        android:orientation="vertical"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/content"
-        android:orientation="vertical">
+        app:layout_constraintTop_toBottomOf="@id/content">
 
         <include
+            android:id="@+id/dynamic_child"
             layout="@layout/cell_dynamic_child"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/dynamic_child"
             android:visibility="gone" />
 
         <include
+            android:id="@+id/dynamic_video_extra"
             layout="@layout/cell_dynamic_video"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/dynamic_video_extra"
             android:visibility="gone" />
 
         <include
+            android:id="@+id/dynamic_image_extra"
             layout="@layout/cell_dynamic_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/dynamic_image_extra"
             android:visibility="gone" />
 
         <include
+            android:id="@+id/dynamic_article_extra"
             layout="@layout/cell_dynamic_article"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/dynamic_article_extra"
             android:visibility="gone" />
     </LinearLayout>
 

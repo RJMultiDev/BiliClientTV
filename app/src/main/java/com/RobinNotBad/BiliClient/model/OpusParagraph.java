@@ -12,6 +12,7 @@ import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 
 import com.RobinNotBad.BiliClient.util.EmoteUtil;
+import com.RobinNotBad.BiliClient.util.Logu;
 import com.RobinNotBad.BiliClient.util.StringUtil;
 
 import org.json.JSONArray;
@@ -19,12 +20,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class OpusParagraph {
+    //这几个是b站的
     public static final int TYPE_TEXT = 1;
     public static final int TYPE_PIC = 2;
     public static final int TYPE_DIVIDER = 3;
-    public static final int TYPE_TEXT_REGULAR = 4;
+    public static final int TYPE_TEXT_BLOCKQUOTE = 4;
     public static final int TYPE_LIST = 5;
-    public static final int TYPE_OPUS = 6;
+    public static final int TYPE_HEADING = 8;
+
+    //这几个是自定义的
+    public static final int TYPE_TEXT_OPUS = 99;
+    public static final int TYPE_VIDEO = 100;
+    public static final int TYPE_DYNAMIC = 101;
+    public static final int TYPE_ARTICLE = 102;
 
     public static final int LIST_STYLE_NUMBER = 1;
     public static final int LIST_STYLE_DOT = 2;
@@ -42,8 +50,13 @@ public class OpusParagraph {
         this.align = para.optInt("align");
         switch (type){
             case TYPE_TEXT:
-            case TYPE_TEXT_REGULAR:
-                this.content = analyzeText(para.optJSONObject("text"), false);
+                this.content = analyzeText(para.optJSONObject("text"));
+                break;
+            case TYPE_TEXT_BLOCKQUOTE:
+                this.content = analyzeBlockQuote(para.optJSONObject("blockquote"));
+                break;
+            case TYPE_HEADING:
+                this.content = analyzeText(para.optJSONObject("heading"));
                 break;
             case TYPE_PIC:
                 this.content = analyzePic(para.optJSONObject("pic"));
@@ -54,7 +67,7 @@ public class OpusParagraph {
             case TYPE_LIST:
                 this.content = analyzeList(para.optJSONObject("list"));
                 break;
-            case TYPE_OPUS:
+            case TYPE_TEXT_OPUS:
                 this.content = analyzeOpus(para.optJSONArray("data"));
                 break;
             default:
@@ -62,31 +75,80 @@ public class OpusParagraph {
         }
     }
 
+    public CharSequence analyzeBlockQuote(JSONObject blockquote) throws JSONException {
+        if (blockquote == null) return "";
+        JSONArray children = blockquote.optJSONArray("children");
+        if (children == null) return "";
+
+        SpannableStringBuilder stringBuilder = new SpannableStringBuilder();
+
+        for (int i = 0; i < children.length(); i++) {
+            JSONObject child = children.optJSONObject(i);
+            if (child == null) break;
+            stringBuilder.append(analyzeText(child.optJSONObject("text")));
+        }
+
+        stringBuilder.setSpan(new BackgroundColorSpan(0x33ffffff),
+                0, stringBuilder.length()-1,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        return stringBuilder;
+    }
+
     public CharSequence analyzeList(JSONObject list) throws JSONException {
         if(list == null) return "";
-        JSONArray items = list.optJSONArray("items");
-        if(items == null) return "";
-
         int listStyle = list.optInt("style");
+
         SpannableStringBuilder stringBuilder = new SpannableStringBuilder();
-        for (int i = 0; i < items.length(); i++) {
-            if (i != 0) stringBuilder.append("\n");
-            JSONObject item = items.getJSONObject(i);
-            switch (listStyle) {
-                case LIST_STYLE_NUMBER:
-                    stringBuilder.append(String.valueOf(item.optInt("order"))).append(". ");
-                    break;
-                case LIST_STYLE_DOT:
-                    stringBuilder.append("· ");
-                    break;
+
+        JSONArray items = list.optJSONArray("items");
+        if (items != null) {
+            for (int i = 0; i < items.length(); i++) {
+                if (i != 0) stringBuilder.append("\n");
+                JSONObject item = items.getJSONObject(i);
+                switch (listStyle) {
+                    case LIST_STYLE_NUMBER:
+                        stringBuilder.append(String.valueOf(item.optInt("order"))).append(". ");
+                        break;
+                    case LIST_STYLE_DOT:
+                        stringBuilder.append("· ");
+                        break;
+                }
+                stringBuilder.append(analyzeText(item));
             }
-            stringBuilder.append(analyzeText(item, true));
+        }
+
+        JSONArray childrenPrimary = list.optJSONArray("children");
+        if (childrenPrimary != null) {
+            for (int i = 0; i < childrenPrimary.length(); i++) {
+                if (i != 0) stringBuilder.append("\n");
+                JSONObject childPrimary = childrenPrimary.optJSONObject(i);
+                if(childPrimary == null) break;
+                switch (listStyle) {
+                    case LIST_STYLE_NUMBER:
+                        stringBuilder.append(String.valueOf(childPrimary.optInt("order"))).append(". ");
+                        break;
+                    case LIST_STYLE_DOT:
+                        stringBuilder.append("· ");
+                        break;
+                }
+
+                JSONArray childrenSecondary = childPrimary.optJSONArray("children");
+                if(childrenSecondary != null) {
+                    SpannableStringBuilder childBuilder = new SpannableStringBuilder();
+                    for (int j = 0; j < childrenSecondary.length(); j++) {
+                        JSONObject childSecondary = childrenSecondary.optJSONObject(j);
+                        childBuilder.append(analyzeText(childSecondary.optJSONObject("text")));
+                    }
+                    stringBuilder.append(childBuilder);
+                }
+            }
         }
 
         return stringBuilder;
     }
 
-    public CharSequence analyzeText(JSONObject text, boolean inList) throws JSONException {
+    public CharSequence analyzeText(JSONObject text) throws JSONException {
         if(text == null) return "";
         JSONArray nodes = text.optJSONArray("nodes");
         if(nodes == null) return "";
@@ -120,14 +182,12 @@ public class OpusParagraph {
                     }
 
                     //字体颜色
-                    String color = word.optString("color");
-                    if(!color.isEmpty() && !color.equals("#18191c"))
-                        stringBuilder.setSpan(new ForegroundColorSpan(Color.parseColor(color)), startPosition, endPosition, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                    //fontLevel=regular实际上是像这样： |你好世界  因为懒得做，所以直接用白色背景
-                    String fontLevel = word.optString("font_level");
-                    if(fontLevel.equals("regular") && !inList)
-                        stringBuilder.setSpan(new BackgroundColorSpan(0x33ffffff), startPosition, endPosition, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    String color = word.optString("color", "#18191c");
+                    if (color.startsWith("#") && !color.equals("#18191c")) try {
+                            stringBuilder.setSpan(new ForegroundColorSpan(Color.parseColor(color)), startPosition, endPosition, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    } catch (Exception ignored) {
+                        Logu.e("color error", color);
+                    }
 
                     break;
 
@@ -175,15 +235,23 @@ public class OpusParagraph {
         SpannableStringBuilder stringBuilder = new SpannableStringBuilder();
         for (int i = 0;i < rich_list.length();i++){
             JSONObject rich = rich_list.getJSONObject(i);
+            int startLength = stringBuilder.length();
             switch (rich.getString("type")){
                 case "RICH_TEXT_NODE_TYPE_AT":
                     stringBuilder.append(rich.getString("text"));
-                    At at = new At(rich.optLong("rid"), stringBuilder.length() - rich.getString("text").length(), stringBuilder.length());
+                    At at = new At(rich.optLong("rid"), startLength, stringBuilder.length());
                     StringUtil.setSingleAt(stringBuilder, at);
                     break;
                 case "RICH_TEXT_NODE_TYPE_TOPIC":
                     stringBuilder.append(rich.getString("text"));
-                    stringBuilder.setSpan(new StringUtil.LinkClickableSpan(rich.getString("jump_url"), TYPE_WEB_URL, rich.getString("jump_url")), stringBuilder.length() - rich.getString("text").length(), stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    stringBuilder.setSpan(new StringUtil.LinkClickableSpan(rich.getString("jump_url"), TYPE_WEB_URL, rich.getString("jump_url")), startLength, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    break;
+                case "RICH_TEXT_NODE_TYPE_EMOJI":
+                    stringBuilder.append(rich.optString("text"));
+                    JSONObject emoji = rich.getJSONObject("emoji");
+                    String url = emoji.optString("icon_url");
+                    int size = emoji.optInt("size");
+                    EmoteUtil.replaceSingle(stringBuilder, url, size, startLength, stringBuilder.length(), 1.0f);
                     break;
                 case "RICH_TEXT_NODE_TYPE_TEXT":
                 default:

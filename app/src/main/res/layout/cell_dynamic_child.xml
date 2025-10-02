@@ -9,15 +9,15 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="6dp">
 
         <ImageView
             android:id="@+id/child_avatar"
             android:layout_width="32dp"
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:adjustViewBounds="true"
             android:src="@mipmap/akari"
             app:layout_constraintDimensionRatio="1:1"
@@ -37,7 +37,7 @@
             app:layout_constraintTop_toTopOf="@id/child_avatar" />
 
         <TextView
-            android:id="@+id/child_content"
+            android:id="@+id/child_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
@@ -46,9 +46,25 @@
             android:ellipsize="end"
             android:text="只因你太美！"
             android:textSize="12sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/child_avatar"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/child_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="6dp"
+            android:ellipsize="end"
+            android:text="第一次压扁成这样的我~"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/child_title"
             tools:ignore="TouchTargetSizeCheck" />
 
         <LinearLayout
@@ -58,8 +74,8 @@
             android:layout_marginStart="6dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="6dp"
-            android:layout_marginBottom="4dp"
             android:orientation="vertical"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -73,17 +89,17 @@
                 android:visibility="gone" />
 
             <include
+                android:id="@+id/dynamic_image_child"
                 layout="@layout/cell_dynamic_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/dynamic_image_child"
                 android:visibility="gone" />
 
             <include
+                android:id="@+id/dynamic_article_child"
                 layout="@layout/cell_dynamic_article"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/dynamic_article_child"
                 android:visibility="gone" />
         </LinearLayout>
 

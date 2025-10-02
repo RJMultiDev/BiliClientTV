@@ -41,7 +41,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.material.card.MaterialCardView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,16 +51,17 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
     public static final int GO_TO_INFO_REQUEST = 71;
     public final TextView username;
     public final TextView content;
+    public final TextView title;
     public TextView pubdate;
     public final ImageView avatar;
     public final LinearLayout extraCard;
     public final View itemView;
     public TextView item_dynamic_share, item_dynamic_delete;
     public TextView likeCount;
-    public MaterialCardView cell_dynamic_child;
-    public final MaterialCardView cell_dynamic_video;
-    public final MaterialCardView cell_dynamic_image;
-    public final MaterialCardView cell_dynamic_article;
+    public View cell_dynamic_child;
+    public final View cell_dynamic_video;
+    public final View cell_dynamic_image;
+    public final View cell_dynamic_article;
     public final boolean isChild;
     final BaseActivity mActivity;
     public ActivityResultLauncher<Intent> relayDynamicLauncher;
@@ -75,6 +75,7 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
             username = itemView.findViewById(R.id.child_username);
             content = itemView.findViewById(R.id.child_content);
             avatar = itemView.findViewById(R.id.child_avatar);
+            title = itemView.findViewById(R.id.child_title);
             extraCard = itemView.findViewById(R.id.child_extraCard);
             this.cell_dynamic_video = extraCard.findViewById(R.id.dynamic_video_child);
             this.cell_dynamic_article = extraCard.findViewById(R.id.dynamic_article_child);
@@ -84,6 +85,7 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
             pubdate = itemView.findViewById(R.id.pubdate);
             content = itemView.findViewById(R.id.content);
             avatar = itemView.findViewById(R.id.avatar);
+            title = itemView.findViewById(R.id.title);
             extraCard = itemView.findViewById(R.id.extraCard);
             item_dynamic_share = itemView.findViewById(R.id.item_dynamic_share);
             likeCount = itemView.findViewById(R.id.likes);
@@ -198,7 +200,12 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
 
     @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
     public void showDynamic(Context context, Dynamic dynamic, boolean clickable) {    //公用的显示函数 这样修改和调用都方便
-        StringUtil.setCopy(content);
+        if(!TextUtils.isEmpty(dynamic.title)) {
+            title.setVisibility(View.VISIBLE);
+            title.setText(dynamic.title);
+        }
+        else title.setVisibility(View.GONE);
+
         username.setText(dynamic.userInfo.name);
         if (!dynamic.userInfo.vip_nickname_color.isEmpty()) {
             username.setTextColor(Color.parseColor(dynamic.userInfo.vip_nickname_color));
@@ -268,15 +275,16 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
                 break;
 
             case "MAJOR_TYPE_DRAW":
+            case "MAJOR_TYPE_OPUS":
                 ArrayList<String> pictureList;
                 if (dynamic.major_object instanceof ArrayList) {
                     pictureList = (ArrayList<String>) dynamic.major_object;
                 } else {
                     pictureList = new ArrayList<>();
                 }
-                View imageCard = cell_dynamic_image;
-                ImageView imageView = imageCard.findViewById(R.id.imageView);
+
                 if(!pictureList.isEmpty()) {
+                    ImageView imageView = cell_dynamic_image.findViewById(R.id.imageView);
                     Glide.with(BiliTerminal.context).asDrawable().load(GlideUtil.url(pictureList.get(0)))
                             .transition(GlideUtil.getTransitionOptions())
                             .placeholder(R.mipmap.placeholder)
@@ -285,9 +293,9 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
                             .sizeMultiplier(0.85f)
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .into(imageView);
-                    TextView textView = imageCard.findViewById(R.id.imageCount);
+                    TextView textView = cell_dynamic_image.findViewById(R.id.imageCount);
                     textView.setText("共" + pictureList.size() + "张图片");
-                    cell_dynamic_image.setOnClickListener(view -> {
+                    imageView.setOnClickListener(view -> {
                         Intent intent = new Intent();
                         intent.setClass(context, ImageViewerActivity.class);
                         intent.putExtra("imageList", pictureList);
@@ -297,6 +305,11 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
                 }
                 break;
         }
+
+        if(dynamic.major_object == null && dynamic.dynamic_forward == null)
+            extraCard.setVisibility(View.GONE);  //这部分在adapter里
+        else
+            extraCard.setVisibility(View.VISIBLE);
 
         if (clickable) {
             content.setMaxLines(5);
@@ -316,7 +329,6 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
                         targetView.performClick();
                     }
                 });
-
             }
         } else {
             content.setMaxLines(999);
@@ -333,7 +345,7 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
             TerminalContext.getInstance().setForwardContent(dynamic);
             relayDynamicLauncher.launch(intent);
         };
-        if (item_dynamic_share != null) item_dynamic_share.setOnClickListener(onRelayClick);
+        if (item_dynamic_share != null && clickable) item_dynamic_share.setOnClickListener(onRelayClick);
 
         View.OnClickListener onDeleteClick = view -> MsgUtil.showMsg("长按删除");
         if (item_dynamic_delete != null) {

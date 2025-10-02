@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import org.json.JSONObject;
+
 import java.io.Serializable;
 
 public class Stats implements Parcelable, Serializable {
@@ -24,6 +26,7 @@ public class Stats implements Parcelable, Serializable {
 
     public boolean like_disabled;
     public boolean coin_disabled;
+    public boolean fav_disabled;
     public boolean reply_disabled;
     public boolean share_disabled;
     public int coin_limit;
@@ -47,6 +50,7 @@ public class Stats implements Parcelable, Serializable {
         coined = in.readInt();
         like_disabled = in.readByte() != 0;
         coin_disabled = in.readByte() != 0;
+        fav_disabled = in.readByte() != 0;
         reply_disabled = in.readByte() != 0;
         share_disabled = in.readByte() != 0;
         coin_limit = in.readInt();
@@ -85,8 +89,42 @@ public class Stats implements Parcelable, Serializable {
         dest.writeInt(coined);
         dest.writeByte((byte) (like_disabled ? 1 : 0));
         dest.writeByte((byte) (coin_disabled ? 1 : 0));
+        dest.writeByte((byte) (fav_disabled ? 1 : 0));
         dest.writeByte((byte) (reply_disabled ? 1 : 0));
         dest.writeByte((byte) (share_disabled ? 1 : 0));
         dest.writeInt(coin_limit);
+    }
+
+    public static Stats fromOpus(JSONObject module_stat) {
+        Stats stats = new Stats();
+        if(module_stat == null) return stats;
+        JSONObject coin = module_stat.optJSONObject("coin");
+        if(coin != null){
+            stats.coin = coin.optInt("count");
+            stats.coin_disabled = coin.optBoolean("forbidden", true) || coin.optBoolean("hidden", true);
+        }
+        JSONObject comment = module_stat.optJSONObject("comment");
+        if(comment != null){
+            stats.reply = comment.optInt("count");
+            stats.reply_disabled = comment.optBoolean("forbidden", true);
+        }
+        JSONObject favorite = module_stat.optJSONObject("favorite");
+        if(favorite != null){
+            stats.favorite = favorite.optInt("count");
+            stats.fav_disabled = favorite.optBoolean("forbidden", true);
+            stats.favoured = favorite.optBoolean("status", true);
+        }
+        JSONObject forward = module_stat.optJSONObject("forward");
+        if(forward != null){
+            stats.share = forward.optInt("count");
+            stats.share_disabled = forward.optBoolean("forbidden", true);
+        }
+        JSONObject like = module_stat.optJSONObject("like");
+        if(like != null){
+            stats.like = like.optInt("count");
+            stats.like_disabled = like.optBoolean("forbidden", true);
+            stats.liked = like.optBoolean("status", true);
+        }
+        return stats;
     }
 }

@@ -338,15 +338,30 @@ public class DynamicApi {
         Logu.v("--------------");
         Dynamic dynamic = new Dynamic();
 
-        dynamic.dynamicId = Long.parseLong(dynamic_json.optString("id_str","0"));
-        Logu.v("id", String.valueOf(dynamic.dynamicId));
-        dynamic.type = dynamic_json.getString("type");
-        Logu.v("type", dynamic.type);
+        if(!dynamic_json.isNull("id_str"))
+            try {
+                dynamic.dynamicId = Long.parseLong(dynamic_json.optString("id_str","0"));
+            } catch (Exception ignored){}
+        else {
+            dynamic.dynamicId = 0;
+        }
+        dynamic.type = dynamic_json.optString("type");
 
         JSONObject basic = dynamic_json.getJSONObject("basic");
-        String comment_id_str = basic.optString("comment_id_str");
-        if (!comment_id_str.isEmpty()) dynamic.comment_id = Long.parseLong(comment_id_str);
+        String comment_id = basic.optString("comment_id_str", "0");
+        if(!TextUtils.isEmpty(comment_id))
+            try {
+                dynamic.comment_id = Long.parseLong(comment_id);
+            } catch (Exception ignored){}
+        else
+            dynamic.comment_id = 0;
+
         dynamic.comment_type = basic.optInt("comment_type");
+
+        Logu.v("id", String.valueOf(dynamic.dynamicId));
+        Logu.v("oid", String.valueOf(dynamic.comment_id));
+        Logu.v("type", dynamic.type);
+        Logu.v("otype", String.valueOf(dynamic.comment_type));
 
         JSONObject modules = dynamic_json.getJSONObject("modules");
 
@@ -456,20 +471,25 @@ public class DynamicApi {
 
                     case "MAJOR_TYPE_OPUS":
                         JSONObject opusJson = major.getJSONObject("opus");
-                        dynamic.title = opusJson.optString("title");
+
+                        String title = opusJson.optString("title");
+                        if(!TextUtils.isEmpty(title) && !"null".equals(title))
+                            dynamic.title = title;
+
                         JSONArray pics = opusJson.optJSONArray("pics");
                         if(pics != null){
                             ArrayList<String> opusPicList = new ArrayList<>();
-                            for (int i = 0; i < pics.length(); i++) {
+                            for (int i = 0; i < pics.length(); i++)
                                 opusPicList.add(pics.getJSONObject(i).optString("url"));
-                            }
+
                             dynamic.major_object = opusPicList;
                         }
 
                         JSONObject summary = opusJson.optJSONObject("summary");
                         if(summary != null)
                             dynamic.content = analyzeTextContent(summary.optJSONArray("rich_text_nodes"));
-                        else dynamic.content = "";
+                        else
+                            dynamic.content = "";
 
                         break;
 
@@ -483,7 +503,8 @@ public class DynamicApi {
                 if (module_additional.getString("type").equals("ADDITIONAL_TYPE_UGC")) {
                     dynamic.major_type = "MAJOR_TYPE_ARCHIVE";
                     dynamic.major_object = analyzeVideoCard(module_additional.getJSONObject("ugc"));
-                } else Logu.v("addi", module_additional.getString("type"));
+                }
+                else Logu.v("addi", module_additional.getString("type"));
             }
         }
 

@@ -144,10 +144,6 @@
             android:exported="true"
             android:label="文章详情" />
         <activity
-            android:name=".activity.article.ArticleInfoActivity"
-            android:exported="false"
-            android:label="专栏详情" />
-        <activity
             android:name=".activity.settings.SettingPrefActivity"
             android:exported="false"
             android:label="偏好设置" />
